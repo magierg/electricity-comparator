@@ -66,7 +66,7 @@ function PlanComparison({ usagePattern, plans, onPlansChange }: PlanComparisonPr
     setCostCalculations(calculations);
   }, [usagePattern, plans]);
 
-  const handlePlanUpdate = (planId: string, field: keyof ElectricityPlan, value: any) => {
+  const handlePlanUpdate = (planId: string, field: keyof ElectricityPlan, value: ElectricityPlan[keyof ElectricityPlan]) => {
     const updatedPlans = plans.map(plan => 
       plan.id === planId ? { ...plan, [field]: value } : plan
     );
