@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import UsageInput from './UsageInput';
 import type { UsagePattern } from '../types';
 
