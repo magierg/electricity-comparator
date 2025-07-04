@@ -32,6 +32,9 @@ jobs:
     - name: Build project
       run: npm run build
 
+    - name: Build Storybook
+      run: npm run build-storybook
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
       with:
