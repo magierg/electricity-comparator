@@ -33,6 +33,6 @@ describe('UsageInput', () => {
       <UsageInput usagePattern={mockUsage} onUsageChange={() => {}} />
     );
     fireEvent.click(screen.getByText('Upload Data'));
-    expect(screen.getByText('Upload Usage Data')).toBeInTheDocument();
+    expect(screen.getByText(/Upload your usage data/i)).toBeInTheDocument();
   });
 });
