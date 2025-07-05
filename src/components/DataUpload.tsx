@@ -192,8 +192,8 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUsageChange, onPeakHoursChang
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Upload Usage Data</h3>
-        <p className="text-gray-600 dark:text-gray-300">Upload your electricity meter data CSV file or try our sample data</p>
+        <span className="text-lg font-semibold text-purple-900 mb-2 block">Upload your usage data</span>
+        <p className="text-purple-700">Upload your electricity meter data CSV file or try our sample data</p>
       </div>
 
       {/* Upload Section */}
@@ -201,51 +201,51 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUsageChange, onPeakHoursChang
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={isProcessing}
-          className="group p-6 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-2xl text-center bg-white dark:bg-gray-800 backdrop-blur-md shadow-lg hover:border-blue-400 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 transition-all duration-200 hover:scale-105 disabled:opacity-50"
+          className="group p-6 border-2 border-dashed border-pink-300 rounded-2xl text-center bg-white shadow-lg hover:border-pink-400 hover:bg-pink-50 transition-all duration-200 hover:scale-105 disabled:opacity-50"
         >
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md">
+            <div className="w-12 h-12 bg-gradient-to-r from-pink-400 to-purple-400 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
             </div>
-            <h4 className="font-bold text-gray-800 dark:text-gray-100 text-lg">Upload CSV File</h4>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Select your meter data file</p>
+            <h4 className="font-bold text-purple-900 text-lg">Upload CSV File</h4>
+            <p className="text-purple-700 mt-1">Select your meter data file</p>
           </div>
         </button>
 
         <button
           onClick={loadSampleData}
           disabled={isProcessing}
-          className="group p-6 border-2 border-transparent rounded-2xl text-center bg-white dark:bg-gray-800 backdrop-blur-md shadow-lg hover:border-green-400 dark:hover:border-green-400 hover:bg-green-50 dark:hover:bg-green-900 transition-all duration-200 hover:scale-105 disabled:opacity-50"
+          className="group p-6 border-2 border-transparent rounded-2xl text-center bg-white shadow-lg hover:border-purple-400 hover:bg-purple-50 transition-all duration-200 hover:scale-105 disabled:opacity-50"
         >
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-teal-400 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h4 className="font-bold text-gray-800 dark:text-gray-100 text-lg">Try Sample Data</h4>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Load sample meter data</p>
+            <h4 className="font-bold text-purple-900 text-lg">Try Sample Data</h4>
+            <p className="text-purple-700 mt-1">Load sample meter data</p>
           </div>
         </button>
       </div>
 
       {/* Peak Hours Configuration */}
-      <div className="bg-white dark:bg-gray-800 backdrop-blur-md rounded-2xl p-6 shadow-lg">
+      <div className="bg-white rounded-2xl p-6 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h4 className="font-semibold text-gray-800 dark:text-gray-100">Peak Hours Configuration</h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300">Define when peak electricity rates apply</p>
+            <h4 className="font-semibold text-purple-900">Peak Hours Configuration</h4>
+            <p className="text-sm text-purple-700">Define when peak electricity rates apply</p>
           </div>
           <button
             onClick={() => setShowPeakHoursConfig(!showPeakHoursConfig)}
-            className="px-4 py-2 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-lg transition-colors flex items-center space-x-2"
+            className="px-4 py-2 bg-pink-100 hover:bg-pink-200 rounded-lg transition-colors flex items-center space-x-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-300"
           >
             <svg className={`w-5 h-5 transition-transform ${showPeakHoursConfig ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
-            <span>{showPeakHoursConfig ? 'Hide' : 'Show'}</span>
+            <span>{showPeakHoursConfig ? 'Hide Peak Hours' : 'Show Peak Hours'}</span>
           </button>
         </div>
 
@@ -253,29 +253,29 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUsageChange, onPeakHoursChang
           <div className="space-y-4">
             {/* Preset Peak Hours */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Peak Hours Presets</label>
+              <label className="block text-sm font-medium text-purple-900 mb-2">Peak Hours Presets</label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 <button
                   onClick={() => setPredefinedPeakHours('morning-evening')}
-                  className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-800 rounded-lg transition-colors"
+                  className="px-3 py-2 text-sm bg-purple-100 hover:bg-pink-100 rounded-lg transition-colors"
                 >
                   Morning + Evening
                 </button>
                 <button
                   onClick={() => setPredefinedPeakHours('evening')}
-                  className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-800 rounded-lg transition-colors"
+                  className="px-3 py-2 text-sm bg-purple-100 hover:bg-pink-100 rounded-lg transition-colors"
                 >
                   Evening Only
                 </button>
                 <button
                   onClick={() => setPredefinedPeakHours('business')}
-                  className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-800 rounded-lg transition-colors"
+                  className="px-3 py-2 text-sm bg-purple-100 hover:bg-pink-100 rounded-lg transition-colors"
                 >
                   Business Hours
                 </button>
                 <button
                   onClick={() => setPredefinedPeakHours('custom')}
-                  className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-800 rounded-lg transition-colors"
+                  className="px-3 py-2 text-sm bg-purple-100 hover:bg-pink-100 rounded-lg transition-colors"
                 >
                   Custom
                 </button>
@@ -284,7 +284,7 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUsageChange, onPeakHoursChang
 
             {/* Hour Selection Grid */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+              <label className="block text-sm font-medium text-purple-900 mb-2">
                 Select Peak Hours (Currently: {customPeakHours.length > 0 ? customPeakHours.map(h => `${h}:00`).join(', ') : 'None'})
               </label>
               <div className="grid grid-cols-6 gap-2">
@@ -292,18 +292,18 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUsageChange, onPeakHoursChang
                   <button
                     key={hour}
                     onClick={() => togglePeakHour(hour)}
-                    className={`px-2 py-2 text-xs rounded-lg transition-colors ${
+                    className={`px-2 py-2 text-xs rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 ${
                       customPeakHours.includes(hour)
-                        ? 'bg-red-500 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
+                        ? 'bg-pink-500 text-white' 
+                        : 'bg-purple-100 hover:bg-pink-100 text-purple-900'
                     }`}
                   >
                     {String(hour).padStart(2, '0')}:00
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                Click hours to toggle peak status. Red = Peak hours
+              <p className="text-xs text-purple-700 mt-2">
+                Click hours to toggle peak status. Pink = Peak hours
               </p>
             </div>
           </div>
@@ -320,30 +320,30 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUsageChange, onPeakHoursChang
 
       {/* Processing Indicator */}
       {isProcessing && (
-        <div className="flex items-center justify-center p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 dark:border-blue-300 mr-3"></div>
-          <span className="text-blue-700 dark:text-blue-200">Processing data...</span>
+        <div className="flex items-center justify-center p-4 bg-pink-50 rounded-lg">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-pink-600 mr-3"></div>
+          <span className="text-pink-700">Processing data...</span>
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-400 rounded-lg">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center">
-            <svg className="w-5 h-5 text-red-400 dark:text-red-200 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-red-700 dark:text-red-200">{error}</span>
+            <span className="text-red-700">{error}</span>
           </div>
         </div>
       )}
 
       {/* Results */}
       {parseResults.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 backdrop-blur-md rounded-2xl p-6 shadow-lg">
+        <div className="bg-white rounded-2xl p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="font-semibold text-gray-800 dark:text-gray-100">Parsed Data ({parseResults.length} days)</h4>
-            <div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
+            <h4 className="font-semibold text-purple-900">Parsed Data ({parseResults.length} days)</h4>
+            <div className="flex items-center space-x-2 text-pink-600">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -357,8 +357,8 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUsageChange, onPeakHoursChang
                 onClick={useAveragePattern}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors mr-2 ${
                   selectedDate === 'average'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-pink-500 text-white'
+                    : 'bg-purple-100 text-purple-900 hover:bg-pink-100'
                 }`}
               >
                 Use Average Pattern
@@ -372,19 +372,19 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUsageChange, onPeakHoursChang
                 key={data.date}
                 className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors ${
                   selectedDate === data.date
-                    ? 'bg-blue-100 dark:bg-blue-900 border border-blue-300 dark:border-blue-700'
-                    : 'bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-pink-100 border border-pink-300'
+                    : 'bg-purple-50 hover:bg-pink-50'
                 }`}
                 onClick={() => handleDateSelection(data.date)}
               >
                 <div>
-                  <span className="font-medium text-gray-800 dark:text-gray-100">{data.date}</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-300 ml-2">
+                  <span className="font-medium text-purple-900">{data.date}</span>
+                  <span className="text-sm text-purple-700 ml-2">
                     {data.totalDaily.toFixed(2)} kWh total
                   </span>
                 </div>
                 {selectedDate === data.date && (
-                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 )}
