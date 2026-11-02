@@ -251,8 +251,9 @@ gh skill install cli/cli gh --agent opencode --scope project
   posts its error and the workflow adds `agent:blocked`.
 - **Model not found**: confirm `OPENCODE_API_KEY` is an OpenCode Go key and
   `opencode-go/deepseek-v4.1-flash` is available in the Console workspace.
-- **Exploratory run aborts with `Insufficient account funds`**: top up the
-  OpenCode Console account or use a funded key. The gate marks the run
+- **Exploratory run aborts with `Insufficient account funds`**: the model is
+  using Zen pay-as-you-go instead of Go. Use `go/deepseek-v4.1-flash` in
+  `e2e.config.ts` and an OpenCode Go API key. The gate marks the run
   `exploratory:blocked`, so auto-merge stays disabled for UI changes.
 - **Risk status missing**: check the `PR Risk` workflow. The script writes
   `risk-result.json` even when classification fails.
