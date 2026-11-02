@@ -8,7 +8,9 @@ risk. Low-risk changes can be auto-merged after the phase 1 human approval.
 
 1. Install the [OpenCode GitHub App](https://github.com/apps/opencode-agent) on
    this repository.
-2. Add the repository secret `OPENCODE_API_KEY`.
+2. Add the repository secret `OPENCODE_API_KEY` using an OpenCode Go API key
+   from the Console Go page. The agent and explorer use
+   `opencode-go/deepseek-v4.1-flash`, which is included in the Go subscription.
 3. Create the `opencode-pr` environment under **Settings → Environments** with
    yourself as a required reviewer. PR command jobs use this environment before
    they access the key or run PR code.
@@ -52,7 +54,7 @@ risk. Low-risk changes can be auto-merged after the phase 1 human approval.
 1. A maintainer adds `agent:ready` to an issue.
 2. Optional: comment `/oc plan` to get a read-only implementation and test plan.
 3. Comment `/oc implement` to open a PR. The agent uses
-   `opencode/deepseek-v4.1-flash`.
+   `opencode-go/deepseek-v4.1-flash` through the Go subscription.
 4. The action creates a branch named `opencode/issue<N>-<timestamp>` and opens a
    PR with `Closes #N`.
 5. CI, risk classification, and exploratory testing run on the PR.
@@ -134,8 +136,9 @@ skipped.
 - report posted to the PR
 - `.e2e/` uploaded as an artifact
 
-The model is `opencodeConsole('deepseek-v4.1-flash')`. The explorer drives the
-running app through `e2e.config.ts`; it does not call production services.
+The model is `opencodeConsole('go/deepseek-v4.1-flash')`, billed to the Go
+subscription. The explorer drives the running app through `e2e.config.ts`; it
+does not call production services.
 
 Verdicts:
 
@@ -246,8 +249,8 @@ gh skill install cli/cli gh --agent opencode --scope project
 
 - **No PR created**: check the OpenCode action comment on the issue. The action
   posts its error and the workflow adds `agent:blocked`.
-- **Model not found**: confirm `OPENCODE_API_KEY` is valid and the model
-  `opencode/deepseek-v4.1-flash` is available in the OpenCode Console workspace.
+- **Model not found**: confirm `OPENCODE_API_KEY` is an OpenCode Go key and
+  `opencode-go/deepseek-v4.1-flash` is available in the Console workspace.
 - **Exploratory run aborts with `Insufficient account funds`**: top up the
   OpenCode Console account or use a funded key. The gate marks the run
   `exploratory:blocked`, so auto-merge stays disabled for UI changes.

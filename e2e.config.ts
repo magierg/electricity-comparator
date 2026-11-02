@@ -26,7 +26,7 @@ export default {
   timeout: 120_000,
   agents: {
     default: {
-      model: opencodeConsole('deepseek-v4.1-flash'),
+      model: opencodeConsole('go/deepseek-v4.1-flash'),
       system:
         'You are a meticulous QA agent for a Wellington electricity plan comparison app. All rates are GST-inclusive. Verify visible values, plan rankings, filters, current-plan savings, and peak-window behavior. Report only issues you can support with evidence from the screen.',
     },

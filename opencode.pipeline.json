@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/deepseek-v4.1-flash",
+  "model": "opencode-go/deepseek-v4.1-flash",
   "permission": {
     "read": "allow",
     "glob": "allow",
@@ -40,7 +40,7 @@
     "planner": {
       "description": "Read-only implementation planner for a GitHub issue",
       "mode": "primary",
-      "model": "opencode/deepseek-v4.1-flash",
+      "model": "opencode-go/deepseek-v4.1-flash",
       "temperature": 0.1,
       "steps": 25,
       "prompt": "{file:./.opencode/prompts/planner.md}",
@@ -76,7 +76,7 @@
     "implementer": {
       "description": "Implements a GitHub issue with tests and verification",
       "mode": "primary",
-      "model": "opencode/deepseek-v4.1-flash",
+      "model": "opencode-go/deepseek-v4.1-flash",
       "temperature": 0.2,
       "steps": 60,
       "prompt": "{file:./.opencode/prompts/implementer.md}",
@@ -144,7 +144,7 @@
     "reviewer": {
       "description": "Read-only code reviewer for a pull request",
       "mode": "primary",
-      "model": "opencode/deepseek-v4.1-flash",
+      "model": "opencode-go/deepseek-v4.1-flash",
       "temperature": 0.1,
       "steps": 25,
       "prompt": "{file:./.opencode/prompts/reviewer.md}",
@@ -188,7 +188,7 @@
     "babysitter": {
       "description": "Fixes CI failures on an existing pull request",
       "mode": "primary",
-      "model": "opencode/deepseek-v4.1-flash",
+      "model": "opencode-go/deepseek-v4.1-flash",
       "temperature": 0.1,
       "steps": 40,
       "prompt": "{file:./.opencode/prompts/babysitter.md}",
@@ -256,7 +256,7 @@
     "triage": {
       "description": "Explains an issue and identifies relevant code without editing",
       "mode": "primary",
-      "model": "opencode/deepseek-v4.1-flash",
+      "model": "opencode-go/deepseek-v4.1-flash",
       "temperature": 0.1,
       "steps": 15,
       "prompt": "{file:./.opencode/prompts/triage.md}",
