@@ -38,8 +38,8 @@ jobs:
         run: |
           gh pr view "${{ github.event.issue.number }}" \
             --repo "$GITHUB_REPOSITORY" \
-            --json headRefName,baseRefName,isCrossRepository \
-            --jq '"head=\(.headRefName)\nbase=\(.baseRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
+            --json headRefOid,baseRefName,isCrossRepository \
+            --jq '"head_sha=\(.headRefOid)\nbase=\(.baseRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
 
       - name: Refuse fork pull requests
         if: steps.pr.outputs.cross == 'true'
@@ -52,7 +52,7 @@ jobs:
         if: steps.pr.outputs.cross == 'false'
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.pr.outputs.head }}
+          ref: ${{ steps.pr.outputs.head_sha }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -106,8 +106,8 @@ jobs:
         run: |
           gh pr view "${{ github.event.issue.number }}" \
             --repo "$GITHUB_REPOSITORY" \
-            --json headRefName,baseRefName,isCrossRepository \
-            --jq '"head=\(.headRefName)\nbase=\(.baseRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
+            --json headRefOid,baseRefName,isCrossRepository \
+            --jq '"head_sha=\(.headRefOid)\nbase=\(.baseRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
 
       - name: Refuse fork pull requests
         if: steps.pr.outputs.cross == 'true'
@@ -120,7 +120,7 @@ jobs:
         if: steps.pr.outputs.cross == 'false'
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.pr.outputs.head }}
+          ref: ${{ steps.pr.outputs.head_sha }}
           fetch-depth: 0
           persist-credentials: false
 
