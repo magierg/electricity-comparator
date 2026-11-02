@@ -20,6 +20,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    outputs:
+      ui: ${{ steps.filter.outputs.ui }}
     steps:
       - name: Check for UI or behavior changes
         id: filter
