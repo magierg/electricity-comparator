@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
   issues: write
   statuses: write
 
@@ -15,18 +15,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  risk:
+  classify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout trusted base branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '24.x'
 
@@ -46,7 +46,7 @@ jobs:
 
       - name: Upload risk result
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: risk-result
           path: risk-result.json

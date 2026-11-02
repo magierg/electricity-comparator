@@ -62,7 +62,7 @@ jobs:
 
       - name: Checkout pull request
         if: steps.pr.outputs.cross == 'false'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ steps.pr.outputs.head_sha }}
           fetch-depth: 0
@@ -82,7 +82,7 @@ jobs:
 
       - name: Setup Node
         if: steps.pr.outputs.cross == 'false'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '24.x'
           cache: 'npm'
@@ -142,7 +142,7 @@ jobs:
 
       - name: Checkout pull request
         if: steps.pr.outputs.cross == 'false'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ steps.pr.outputs.head_sha }}
           fetch-depth: 0
@@ -162,7 +162,7 @@ jobs:
 
       - name: Setup Node
         if: steps.pr.outputs.cross == 'false'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '24.x'
           cache: 'npm'
