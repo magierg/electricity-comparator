@@ -9,13 +9,16 @@ risk. Low-risk changes can be auto-merged after the phase 1 human approval.
 1. Install the [OpenCode GitHub App](https://github.com/apps/opencode-agent) on
    this repository.
 2. Add the repository secret `OPENCODE_API_KEY`.
-3. Run the label setup script:
+3. Create the `opencode-pr` environment under **Settings → Environments** with
+   yourself as a required reviewer. PR command jobs use this environment before
+   they access the key or run PR code.
+4. Run the label setup script:
 
    ```bash
    bash scripts/setup-labels.sh
    ```
 
-4. Enable auto-merge and branch deletion:
+5. Enable auto-merge and branch deletion:
 
    ```bash
    gh api -X PATCH "repos/magierg/electricity-comparator" \
@@ -23,7 +26,7 @@ risk. Low-risk changes can be auto-merged after the phase 1 human approval.
      -f delete_branch_on_merge=true
    ```
 
-5. Configure the `main` branch ruleset or branch protection:
+6. Configure the `main` branch ruleset or branch protection:
    - Require a pull request before merging.
    - Phase 1: require 1 approval and dismiss stale approvals on new commits.
    - Require status checks:
@@ -36,7 +39,7 @@ risk. Low-risk changes can be auto-merged after the phase 1 human approval.
    - Block force pushes and branch deletion.
    - Optionally require conversation resolution.
 
-6. Add repository variables:
+7. Add repository variables:
    - `RISK_ENFORCE` — `false` initially, `true` after calibration.
    - `AUTOMERGE_REQUIRE_APPROVAL` — `true` for phase 1, `false` for phase 2.
    - `JEV_MODEL` — optional, defaults to `jev-1.13-free`.
@@ -201,6 +204,8 @@ The pstack source is pinned in `.opencode/PSTACK_VERSION`. Do not use
   generated data, and agent configuration.
 - Fork PRs skip agent and exploratory jobs because repository secrets are not
   available to them.
+- PR command jobs run in the `opencode-pr` environment, which requires owner
+  approval before the job can access `OPENCODE_API_KEY` and execute PR code.
 - `OPENCODE_API_KEY` is a repository secret. Set a budget in the OpenCode
   Console and rotate the key if it is exposed.
 - Invalid or unavailable Jev results produce `risk:unknown`; auto-merge is
@@ -243,6 +248,9 @@ gh skill install cli/cli gh --agent opencode --scope project
   posts its error and the workflow adds `agent:blocked`.
 - **Model not found**: confirm `OPENCODE_API_KEY` is valid and the model
   `opencode/deepseek-v4.1-flash` is available in the OpenCode Console workspace.
+- **Exploratory run aborts with `Insufficient account funds`**: top up the
+  OpenCode Console account or use a funded key. The gate marks the run
+  `exploratory:blocked`, so auto-merge stays disabled for UI changes.
 - **Risk status missing**: check the `PR Risk` workflow. The script writes
   `risk-result.json` even when classification fails.
 - **Jev unavailable**: the PR gets `risk:unknown`; add `OPENCODE_API_KEY` or
