@@ -48,6 +48,18 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --body "OpenCode PR commands are limited to branches in this repository. Fork pull requests need a manual review."
 
+      - name: Reject commands older than the PR head
+        if: steps.pr.outputs.cross == 'false'
+        run: |
+          pushed_at=$(gh api "repos/$GITHUB_REPOSITORY/commits/${{ steps.pr.outputs.head_sha }}" --jq '.commit.committer.date')
+          comment_at="${{ github.event.comment.created_at }}"
+          if [ "$(date -d "$pushed_at" +%s)" -gt "$(date -d "$comment_at" +%s)" ]; then
+            gh issue comment "${{ github.event.issue.number }}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body "The pull request changed after this command was posted. Re-run the command after the latest push."
+            exit 1
+          fi
+
       - name: Checkout pull request
         if: steps.pr.outputs.cross == 'false'
         uses: actions/checkout@v4
@@ -115,6 +127,18 @@ jobs:
           gh issue comment "${{ github.event.issue.number }}" \
             --repo "$GITHUB_REPOSITORY" \
             --body "OpenCode PR commands are limited to branches in this repository. Fork pull requests need a manual fix."
+
+      - name: Reject commands older than the PR head
+        if: steps.pr.outputs.cross == 'false'
+        run: |
+          pushed_at=$(gh api "repos/$GITHUB_REPOSITORY/commits/${{ steps.pr.outputs.head_sha }}" --jq '.commit.committer.date')
+          comment_at="${{ github.event.comment.created_at }}"
+          if [ "$(date -d "$pushed_at" +%s)" -gt "$(date -d "$comment_at" +%s)" ]; then
+            gh issue comment "${{ github.event.issue.number }}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body "The pull request changed after this command was posted. Re-run the command after the latest push."
+            exit 1
+          fi
 
       - name: Checkout pull request
         if: steps.pr.outputs.cross == 'false'
