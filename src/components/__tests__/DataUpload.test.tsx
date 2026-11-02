@@ -1,18 +1,65 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import DataUpload from '../DataUpload';
 
-describe('DataUpload', () => {
-  it('renders upload button and handles file upload', async () => {
-    const { container } = render(<DataUpload onUsageChange={jest.fn()} />);
-    const uploadButton = screen.getByText(/upload csv file/i);
-    expect(uploadButton).toBeInTheDocument();
+function halfHourLabels(): string[] {
+  const labels: string[] = [];
+  for (let interval = 0; interval < 48; interval += 1) {
+    const startHour = Math.floor(interval / 2);
+    const startMinute = interval % 2 === 0 ? '00' : '30';
+    const endInterval = interval + 1;
+    const endHour = Math.floor(endInterval / 2) % 24;
+    const endMinute = endInterval % 2 === 0 ? '00' : '30';
+    labels.push(
+      `${String(startHour).padStart(2, '0')}:${startMinute} - ${String(endHour).padStart(2, '0')}:${endMinute}`,
+    );
+  }
+  return labels;
+}
 
-    // Simulate file upload
-    const file = new File([
-      'Date,00:00 - 00:30,00:30 - 01:00,01:00 - 01:30,01:30 - 02:00,02:00 - 02:30,02:30 - 03:00,03:00 - 03:30,03:30 - 04:00,04:00 - 04:30,04:30 - 05:00,05:00 - 05:30,05:30 - 06:00,06:00 - 06:30,06:30 - 07:00,07:00 - 07:30,07:30 - 08:00,08:00 - 08:30,08:30 - 09:00,09:00 - 09:30,09:30 - 10:00,10:00 - 10:30,10:30 - 11:00,11:00 - 11:30,11:30 - 12:00,12:00 - 12:30,12:30 - 13:00,13:00 - 13:30,13:30 - 14:00,14:00 - 14:30,14:30 - 15:00,15:00 - 15:30,15:30 - 16:00,16:00 - 16:30,16:30 - 17:00,17:00 - 17:30,17:30 - 18:00,18:00 - 18:30,18:30 - 19:00,19:00 - 19:30,19:30 - 20:00,20:00 - 20:30,20:30 - 21:00,21:00 - 21:30,21:30 - 22:00,22:00 - 22:30,22:30 - 23:00,23:00 - 23:30,23:30 - 24:00\n2025-06-01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.3,4.4,4.5,4.6,4.7,4.8,4.9\n'
-    ], 'usage.csv', { type: 'text/csv' });
-    const fileInput = container.querySelector('input[type="file"]');
-    fireEvent.change(fileInput as HTMLInputElement, { target: { files: [file] } });
-    // Optionally, check for a success message or callback
+function meterCsv(): string {
+  return [
+    ['ICP', 'Meter number', 'Meter element', 'Date', ...halfHourLabels()].join(','),
+    ['ICP1', 'METER1', 'Consumption', '1/6/2025', ...Array(48).fill(1)].join(','),
+  ].join('\n');
+}
+
+describe('DataUpload', () => {
+  it('renders the upload and sample buttons', () => {
+    render(<DataUpload onUsageChange={jest.fn()} />);
+
+    expect(screen.getByRole('button', { name: /upload meter csv/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /use sample data/i })).toBeInTheDocument();
+  });
+
+  it('parses an uploaded meter CSV and reports the average usage', async () => {
+    const onUsageChange = jest.fn();
+    const { container } = render(<DataUpload onUsageChange={onUsageChange} />);
+
+    const file = new File([meterCsv()], 'usage.csv', { type: 'text/csv' });
+    const input = container.querySelector('input[type="file"]');
+    expect(input).not.toBeNull();
+
+    fireEvent.change(input as HTMLInputElement, { target: { files: [file] } });
+
+    await waitFor(() => expect(onUsageChange).toHaveBeenCalled());
+
+    const [usage, source] = onUsageChange.mock.calls[0];
+    expect(usage.totalDaily).toBe(48);
+    expect(usage.hourlyUsage).toHaveLength(24);
+    expect(source.kind).toBe('upload');
+    expect(await screen.findByText(/usage data loaded/i)).toBeInTheDocument();
+    expect(screen.getByText(/48 kWh average per day/i)).toBeInTheDocument();
+  });
+
+  it('shows an error for an invalid CSV', async () => {
+    const { container } = render(<DataUpload onUsageChange={jest.fn()} />);
+
+    const file = new File(['not,a,valid,csv\n1,2,3,4'], 'invalid.csv', {
+      type: 'text/csv',
+    });
+    const input = container.querySelector('input[type="file"]');
+    fireEvent.change(input as HTMLInputElement, { target: { files: [file] } });
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/invalid csv format/i);
   });
 });

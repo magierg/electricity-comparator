@@ -1,65 +1,60 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Electricity Plan Comparator Main Flow', () => {
-  test('User uploads usage data, configures plan, and sees comparison', async ({ page }) => {
+test.describe('Wellington electricity plan comparison', () => {
+  test('loads sample meter data and shows ranked plans', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /upload usage data/i })).toBeVisible();
 
-    // Try sample data
-    await page.getByRole('heading', { name: /try sample data/i }).click();
-    await expect(page.getByText(/successfully parsed/i)).toBeVisible();
-    await expect(page.getByRole('heading', { name: /parsed data/i })).toBeVisible();
-
-    // Open peak hours config
-    await page.getByRole('button', { name: /show peak hours/i }).click();
-    await expect(page.getByText(/peak hours presets/i)).toBeVisible();
-    await page.getByText(/evening only/i).click();
-
-    // Check plan comparison is visible
-    await expect(page.getByRole('heading', { name: /plan comparison/i })).toBeVisible();
-    await expect(page.getByText(/cost comparison/i)).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /wellington electricity plan comparison/i }),
+    ).toBeVisible();
+    await expect(page.getByText(/sample data loaded/i)).toBeVisible();
+    await expect(page.getByText(/cheapest plan for your usage/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /plans ranked by annual cost/i })).toBeVisible();
+    await expect(page.getByText(/best value/i).first()).toBeVisible();
+    await expect(page.getByText(/gst included/i)).toBeVisible();
+    await expect(page.getByText(/17 plans/i).first()).toBeVisible();
+    await expect(page.getByText(/october 2026/i).first()).toBeVisible();
   });
 
-  test('User enters usage manually and sees cost comparison', async ({ page }) => {
-    test.setTimeout(10000); // Reduce timeout to 10s for this test
+  test('switches to an annual estimate and updates the recommendation', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /daily usage pattern/i })).toBeVisible();
+    await expect(page.getByText(/sample data loaded/i)).toBeVisible();
 
-    // Switch to Custom Hours mode
-    await page.getByRole('button', { name: /custom hours/i }).click();
+    await page.getByRole('tab', { name: /annual estimate/i }).click();
+    const annualInput = page.getByLabel(/annual usage/i);
+    await annualInput.fill('5000');
 
-    // Enter 1 kWh for each hour (labels are 00:00, 01:00, ... 23:00)
-    for (let hour = 0; hour < 24; hour++) {
-      const label = `${String(hour).padStart(2, '0')}:00`;
-      const input = page.getByLabel(label);
-      await input.fill('1');
-    }
-
-    // Open peak hours config in upload section (should not affect manual input)
-    await page.getByRole('button', { name: /show peak hours/i }).click();
-    await expect(page.getByText(/peak hours presets/i)).toBeVisible();
-    await page.getByText(/evening only/i).click();
-
-    // Check plan comparison is visible
-    await expect(page.getByRole('heading', { name: /plan comparison/i })).toBeVisible();
-    await expect(page.getByText(/cost comparison/i)).toBeVisible();
+    await expect(page.getByText(/5,000 kWh\/year/i)).toBeVisible();
+    await expect(page.getByText(/suggested:/i)).toContainText(/low user/i);
+    await expect(page.getByText(/cheapest plan for your usage/i)).toBeVisible();
   });
 
-  test('User uploads invalid CSV and sees error', async ({ page }) => {
+  test('selects a current plan and shows potential savings', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /upload usage data/i })).toBeVisible();
+    await expect(page.getByText(/sample data loaded/i)).toBeVisible();
 
-    // Simulate file upload with invalid content
+    const currentPlan = page.getByLabel(/your current plan/i);
+    await currentPlan.selectOption({ index: 2 });
+
+    await expect(page.getByText(/you could save/i)).toBeVisible();
+    await expect(page.getByText(/switching from/i)).toBeVisible();
+  });
+
+  test('shows an error for an invalid CSV upload', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText(/sample data loaded/i)).toBeVisible();
+
     const [fileChooser] = await Promise.all([
       page.waitForEvent('filechooser'),
-      page.getByRole('button', { name: /upload csv file/i }).click(),
+      page.getByRole('button', { name: /upload meter csv/i }).click(),
     ]);
+
     await fileChooser.setFiles({
       name: 'invalid.csv',
       mimeType: 'text/csv',
-      buffer: Buffer.from('not,a,valid,csv\n1,2,3,4')
+      buffer: Buffer.from('not,a,valid,csv\n1,2,3,4'),
     });
 
-    await expect(page.getByText(/invalid csv format/i)).toBeVisible();
+    await expect(page.getByRole('alert')).toContainText(/invalid csv format/i);
   });
 });
