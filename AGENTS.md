@@ -45,14 +45,15 @@ requires it. Run `npm run data:plans:check` after any data change.
 
 These restrictions apply to the OpenCode GitHub pipeline agents (`implementer`,
 `planner`, `reviewer`, `babysitter`, and `triage`). Local sessions using the
-default agent are not restricted by the tool policy in `opencode.json`; local
-edits to these paths are allowed when the user explicitly asks for them.
+default agent are not restricted by the pipeline policy in
+`opencode.pipeline.json`; local edits to these paths are allowed when the user
+explicitly asks for them.
 
 Pipeline agents must not edit:
 
 - `.github/**`
 - `package.json` or `package-lock.json`
-- `opencode.json`, `AGENTS.md`, or `.opencode/**`
+- `opencode.json`, `opencode.pipeline.json`, `AGENTS.md`, or `.opencode/**`
 - `src/data/**`
 - `scripts/**`
 - `data/**`

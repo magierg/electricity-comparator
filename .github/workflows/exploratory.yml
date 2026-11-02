@@ -32,7 +32,9 @@ jobs:
             "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
             --paginate \
             --jq '.[].filename')
-          if printf '%s\n' "$files" | grep -Eq '^(src/|index\.html|public/|e2e\.config\.ts|vite\.config\.ts)'; then
+          behavior_files=$(printf '%s\n' "$files" \
+            | grep -Ev '(__tests__/|\.(test|spec)\.[cm]?[jt]sx?$)' || true)
+          if printf '%s\n' "$behavior_files" | grep -Eq '^(src/|index\.html|public/|e2e\.config\.ts|vite\.config\.ts)'; then
             echo "ui=true" >> "$GITHUB_OUTPUT"
           else
             echo "ui=false" >> "$GITHUB_OUTPUT"

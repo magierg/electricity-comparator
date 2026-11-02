@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
 
 const REPORT_PATH = process.env.E2E_REPORT || '.e2e/report.json';
 const COMMENT_PATH = process.env.EXPLORE_COMMENT_PATH || 'exploratory-comment.md';
@@ -29,7 +30,7 @@ function findingLine(finding) {
   return lines.join('\n');
 }
 
-function comment({ verdict, explore, findings, error }) {
+export function buildComment({ verdict, explore, findings, error }) {
   const lines = [
     '<!-- agent-exploratory -->',
     '## Exploratory test',
@@ -53,8 +54,13 @@ function comment({ verdict, explore, findings, error }) {
   if (findings.length > 0) {
     lines.push('', '### Findings', '');
     for (const finding of findings) lines.push(findingLine(finding), '');
-  } else if (!error) {
+  } else if (!error && verdict === 'passed') {
     lines.push('', 'No issues reported.');
+  } else if (verdict === 'blocked') {
+    lines.push(
+      '',
+      'The exploration did not complete. Check the e2e log for a startup, provider, or timeout failure.',
+    );
   }
 
   lines.push(
@@ -62,6 +68,29 @@ function comment({ verdict, explore, findings, error }) {
     '_Screenshots and the full report are in the `exploratory-report` artifact._',
   );
   return `${lines.join('\n')}\n`;
+}
+
+export function decideVerdict(explore, minSeverity = MIN_BLOCKING_SEVERITY) {
+  const findings = Array.isArray(explore.findings) ? explore.findings : [];
+  const blocking = findings.filter(
+    (finding) =>
+      finding.kind === 'issue' && Number(finding.severity ?? 0) >= minSeverity,
+  );
+
+  const steps = Array.isArray(explore.steps) ? explore.steps : [];
+  const allStepsBlocked =
+    steps.length > 0 && steps.every((step) => step.status === 'blocked');
+
+  if (
+    explore.ended === 'blocked' ||
+    explore.ended === 'aborted' ||
+    steps.length === 0 ||
+    allStepsBlocked
+  ) {
+    return { verdict: 'blocked', findings };
+  }
+
+  return { verdict: blocking.length > 0 ? 'findings' : 'passed', findings };
 }
 
 async function main() {
@@ -75,34 +104,13 @@ async function main() {
     explore = report.run?.explore || report.explore;
     if (!explore) throw new Error(`No run.explore record in ${REPORT_PATH}`);
 
-    findings = Array.isArray(explore.findings) ? explore.findings : [];
-    const blocking = findings.filter(
-      (finding) =>
-        finding.kind === 'issue' && Number(finding.severity ?? 0) >= MIN_BLOCKING_SEVERITY,
-    );
-
-    const steps = Array.isArray(explore.steps) ? explore.steps : [];
-    const allStepsBlocked =
-      steps.length > 0 && steps.every((step) => step.status === 'blocked');
-
-    if (
-      explore.ended === 'blocked' ||
-      explore.ended === 'aborted' ||
-      steps.length === 0 ||
-      (allStepsBlocked && findings.length === 0)
-    ) {
-      verdict = 'blocked';
-    } else if (blocking.length > 0) {
-      verdict = 'findings';
-    } else {
-      verdict = 'passed';
-    }
+    ({ verdict, findings } = decideVerdict(explore));
   } catch (caught) {
     error = caught instanceof Error ? caught.message : String(caught);
     verdict = 'blocked';
   }
 
-  const body = comment({ verdict, explore, findings, error });
+  const body = buildComment({ verdict, explore, findings, error });
   await writeFile(COMMENT_PATH, body, 'utf8');
 
   const output = process.env.GITHUB_OUTPUT;
@@ -115,7 +123,9 @@ async function main() {
   if (verdict !== 'passed') process.exitCode = verdict === 'blocked' ? 2 : 1;
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 2;
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 2;
+  });
+}

@@ -18,6 +18,7 @@ env:
   HUSKY: 0
   GIT_TERMINAL_PROMPT: 0
   GH_TOKEN: ${{ github.token }}
+  OPENCODE_CONFIG: ${{ github.workspace }}/opencode.pipeline.json
 
 jobs:
   review:
@@ -36,8 +37,8 @@ jobs:
         run: |
           gh pr view "${{ github.event.issue.number }}" \
             --repo "$GITHUB_REPOSITORY" \
-            --json headRefName,isCrossRepository \
-            --jq '"head=\(.headRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
+            --json headRefName,baseRefName,isCrossRepository \
+            --jq '"head=\(.headRefName)\nbase=\(.baseRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
 
       - name: Refuse fork pull requests
         if: steps.pr.outputs.cross == 'true'
@@ -53,6 +54,18 @@ jobs:
           ref: ${{ steps.pr.outputs.head }}
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Verify trusted agent configuration
+        if: steps.pr.outputs.cross == 'false'
+        run: |
+          git fetch origin "${{ steps.pr.outputs.base }}" --depth=1
+          base_sha=$(git rev-parse FETCH_HEAD)
+          if ! git diff --quiet "$base_sha" HEAD -- opencode.pipeline.json opencode.json AGENTS.md .opencode; then
+            gh issue comment "${{ github.event.issue.number }}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body "Agent configuration changed in this pull request. Run the review or fix manually after reviewing the configuration diff."
+            exit 1
+          fi
 
       - name: Setup Node
         if: steps.pr.outputs.cross == 'false'
@@ -91,8 +104,8 @@ jobs:
         run: |
           gh pr view "${{ github.event.issue.number }}" \
             --repo "$GITHUB_REPOSITORY" \
-            --json headRefName,isCrossRepository \
-            --jq '"head=\(.headRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
+            --json headRefName,baseRefName,isCrossRepository \
+            --jq '"head=\(.headRefName)\nbase=\(.baseRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
 
       - name: Refuse fork pull requests
         if: steps.pr.outputs.cross == 'true'
@@ -108,6 +121,18 @@ jobs:
           ref: ${{ steps.pr.outputs.head }}
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Verify trusted agent configuration
+        if: steps.pr.outputs.cross == 'false'
+        run: |
+          git fetch origin "${{ steps.pr.outputs.base }}" --depth=1
+          base_sha=$(git rev-parse FETCH_HEAD)
+          if ! git diff --quiet "$base_sha" HEAD -- opencode.pipeline.json opencode.json AGENTS.md .opencode; then
+            gh issue comment "${{ github.event.issue.number }}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body "Agent configuration changed in this pull request. Run the review or fix manually after reviewing the configuration diff."
+            exit 1
+          fi
 
       - name: Setup Node
         if: steps.pr.outputs.cross == 'false'

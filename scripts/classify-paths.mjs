@@ -30,7 +30,7 @@ const RULES = [
     matches: (path) =>
       /^\.github\//.test(path) ||
       /^scripts\//.test(path) ||
-      /^opencode\.json$/.test(path) ||
+      /^opencode(\.pipeline)?\.json$/.test(path) ||
       /^\.opencode\//.test(path),
   },
   {
@@ -79,7 +79,7 @@ const SENSITIVE_PATTERNS = [
   /^jest\.(config\.cjs|setup\.ts)$/,
   /^tsconfig.*\.json$/,
   /^eslint\.config\.js$/,
-  /^opencode\.json$/,
+  /^opencode(\.pipeline)?\.json$/,
   /^AGENTS\.md$/,
   /^\.opencode\//,
 ];

@@ -18,6 +18,7 @@ env:
   HUSKY: 0
   GIT_TERMINAL_PROMPT: 0
   GH_TOKEN: ${{ github.token }}
+  OPENCODE_CONFIG: ${{ github.workspace }}/opencode.pipeline.json
 
 jobs:
   plan:

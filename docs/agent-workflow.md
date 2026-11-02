@@ -121,7 +121,9 @@ calculation logic, or build/test configuration.
 
 ## Exploratory testing
 
-`exploratory.yml` runs `e2e explore` for UI and behavior changes:
+`exploratory.yml` runs `e2e explore` for UI and behavior changes. Changes that
+only touch tests under `src/**/__tests__/` or `*.test.*` / `*.spec.*` files are
+skipped.
 
 - 8 exploration steps
 - 10 minute wall clock
@@ -152,21 +154,24 @@ Use this to decide when to enable `RISK_ENFORCE` and whether the threshold in
 
 ## Local and pipeline permissions
 
-The restrictive tool policy lives on the named pipeline agents
-(`implementer`, `planner`, `reviewer`, `babysitter`, and `triage`) in
-`opencode.json`. There is no top-level permission block, so local sessions using
-the default `build` agent can edit scripts, workflows, dependencies, and tests
-when the user explicitly asks.
+There are two configs:
 
-Pipeline agents are explicitly selected by the workflows:
+- `opencode.json` — local only. It sets the model and has no permission block,
+  so the default `build` agent is unrestricted locally.
+- `opencode.pipeline.json` — used only by the GitHub workflows through
+  `OPENCODE_CONFIG`. It defines the restricted `implementer`, `planner`,
+  `reviewer`, `babysitter`, and `triage` agents.
+
+The workflows explicitly select those agents:
 
 - `/oc implement` → `implementer`
 - `/oc plan` → `planner`
 - `/oc review` → `reviewer`
 - `/oc fix checks` → `babysitter`
 
-Those agents keep the `scripts/**`, `.github/**`, dependency, generated-data,
-and build-config restrictions.
+The pipeline agents keep the `scripts/**`, `.github/**`, dependency,
+generated-data, and build-config restrictions. Local work with the default
+agent does not.
 
 ## Agent skills
 

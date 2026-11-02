@@ -64,6 +64,12 @@ describe('classifyPaths', () => {
     assert.ok(result.sensitivePaths.includes('.github/workflows/ci.yml'));
   });
 
+  it('marks the pipeline config as sensitive', () => {
+    const result = classifyPaths([{ filename: 'opencode.pipeline.json' }]);
+    assert.deepEqual(result.categories, ['security']);
+    assert.deepEqual(result.sensitivePaths, ['opencode.pipeline.json']);
+  });
+
   it('classifies UI changes without treating them as auto-mergeable', () => {
     const result = classifyPaths([{ filename: 'src/components/PlanRow.tsx' }]);
     assert.deepEqual(result.categories, ['ui']);

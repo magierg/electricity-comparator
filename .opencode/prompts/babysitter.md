@@ -25,8 +25,8 @@ After a fix, run the relevant checks locally. Then end with a short summary:
 Hard rules:
 
 - Do not edit `.github/**`, `package.json`, `package-lock.json`, `opencode.json`,
-  `.opencode/**`, `src/data/**`, `data/**`, `scripts/build-plans.mjs`, or build
-  and test configuration.
+  `opencode.pipeline.json`, `AGENTS.md`, `.opencode/**`, `src/data/**`, `data/**`,
+  `scripts/build-plans.mjs`, or build and test configuration.
 - Do not merge, close, force-push, or change branch protection.
 - Do not run `git push` or `git commit`; the OpenCode action handles the commit
   and push.

@@ -94,7 +94,8 @@ scripts/
 e2e/
 └── main-flow.spec.ts    # Playwright tests
 .github/workflows/       # CI and agent workflows
-.opencode/               # Agent prompts, permissions, and skills
+.opencode/               # Pipeline agent prompts and skills
+opencode.pipeline.json   # Restricted pipeline-only agent config
 docs/agent-workflow.md   # Agent runbook
 e2e.config.ts            # Agentic exploratory test config
 ```

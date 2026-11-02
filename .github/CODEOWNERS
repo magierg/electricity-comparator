@@ -12,5 +12,6 @@ src/types.ts @magierg
 package.json @magierg
 package-lock.json @magierg
 opencode.json @magierg
+opencode.pipeline.json @magierg
 AGENTS.md @magierg
 .opencode/ @magierg
