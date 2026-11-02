@@ -2,7 +2,7 @@ name: Exploratory
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, reopened, ready_for_review, labeled]
 
 permissions:
   contents: read
@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   changes:
+    if: github.event.action != 'labeled' || github.event.label.name == 'exploratory:run'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -112,7 +113,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          for label in exploratory:passed exploratory:findings exploratory:blocked exploratory:accepted; do
+          for label in exploratory:passed exploratory:findings exploratory:blocked exploratory:accepted exploratory:run; do
             gh pr edit "${{ github.event.pull_request.number }}" \
               --repo "$GITHUB_REPOSITORY" \
               --remove-label "$label" 2>/dev/null || true

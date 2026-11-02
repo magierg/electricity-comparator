@@ -126,7 +126,9 @@ calculation logic, or build/test configuration.
 
 ## Exploratory testing
 
-`exploratory.yml` runs `e2e explore` for UI and behavior changes. Changes that
+`exploratory.yml` runs `e2e explore` for UI and behavior changes. It runs when
+a PR is opened, reopened, or marked ready for review, and when the
+`exploratory:run` label is added. It does not run on every push. Changes that
 only touch tests under `src/**/__tests__/` or `*.test.*` / `*.spec.*` files are
 skipped.
 
@@ -146,6 +148,9 @@ Verdicts:
 - `exploratory:findings` — medium or higher issue reported
 - `exploratory:blocked` — the run could not complete
 - `exploratory:accepted` — human override
+
+To re-run after new commits, add the `exploratory:run` label. The workflow
+removes it after the run so it can be added again later.
 
 ## Calibration
 
@@ -222,7 +227,10 @@ The pstack source is pinned in `.opencode/PSTACK_VERSION`. Do not use
 - Babysitter: 40 steps.
 - Explorer: 8 e2e steps and a 10 minute cap.
 - Jobs have `timeout-minutes` and PR concurrency groups.
-- `ci.yml` cancels superseded runs.
+- `ci.yml` cancels superseded runs. Its Playwright `e2e` job runs only when UI
+  or behavior files change.
+- `exploratory.yml` runs on PR open/ready or the `exploratory:run` label, not
+  on every push.
 
 ## Debugging check failures
 

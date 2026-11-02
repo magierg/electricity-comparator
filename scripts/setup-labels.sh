@@ -38,6 +38,7 @@ create "automerge:eligible" "0e8a16" "Eligible for phase 1 auto-merge"
 create "automerge:blocked" "6e7781" "Not eligible for auto-merge"
 create "do-not-merge" "b60205" "Stop the auto-merge workflow"
 
+create "exploratory:run" "1d76db" "Re-run exploratory testing for this pull request"
 create "exploratory:passed" "0e8a16" "The exploratory run found no blocking issue"
 create "exploratory:findings" "d4a72c" "The exploratory run reported findings"
 create "exploratory:blocked" "cf222e" "The exploratory run could not complete"

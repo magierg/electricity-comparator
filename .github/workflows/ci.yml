@@ -18,6 +18,36 @@ env:
   GIT_TERMINAL_PROMPT: 0
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      ui: ${{ steps.filter.outputs.ui }}
+    steps:
+      - name: Detect UI or behavior changes
+        id: filter
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "ui=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          files=$(gh api \
+            "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+            --paginate \
+            --jq '.[].filename')
+          behavior_files=$(printf '%s\n' "$files" \
+            | grep -Ev '(__tests__/|\.(test|spec)\.[cm]?[jt]sx?$)' || true)
+          if printf '%s\n' "$behavior_files" | grep -Eq '^(src/|index\.html|public/|e2e\.config\.ts|vite\.config\.ts|playwright\.config\.ts|package(-lock)?\.json)'; then
+            echo "ui=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ui=false" >> "$GITHUB_OUTPUT"
+          fi
+
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -119,6 +149,8 @@ jobs:
         run: git diff -- src/data/wellington-plans.ts
 
   e2e:
+    needs: changes
+    if: needs.changes.outputs.ui == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -177,7 +209,7 @@ jobs:
 
   ci-success:
     if: always()
-    needs: [lint, unit, build, data, e2e, security]
+    needs: [changes, lint, unit, build, data, e2e, security]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
