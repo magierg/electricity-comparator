@@ -267,6 +267,9 @@ gh skill install cli/cli gh --agent opencode --scope project
   `risk-result.json` even when classification fails.
 - **Jev unavailable**: the PR gets `risk:unknown`; add `OPENCODE_API_KEY` or
   switch `JEV_MODEL`. Auto-merge remains blocked.
+- **Exploratory run not triggered after a push**: add the `exploratory:run`
+  label to run exploratory testing again. The workflow removes the label after
+  the run so it can be added again later.
 - **Exploratory run flaky**: inspect the `exploratory-report` artifact and add
   `exploratory:accepted` only after reviewing the report.
 - **Auto-merge not enabled**: confirm repository auto-merge is on, the ruleset
