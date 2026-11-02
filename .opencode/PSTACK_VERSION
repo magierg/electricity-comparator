@@ -1,0 +1,7 @@
+The skills in .opencode/skills were adapted from pstack:
+https://github.com/painhardcore/pstack
+Pinned source commit: 04830a98367e41c79d1565e0c4903cc6ddedce1b
+License: MIT (see .opencode/PSTACK_LICENSE)
+
+The adaptation keeps the core engineering workflow and trims host-specific
+playbooks. The repository-specific verify-electricity-comparator skill is local.

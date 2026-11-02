@@ -1,0 +1,38 @@
+name: Risk calibration
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Update calibration issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RISK_REPORT_DAYS: '90'
+        run: node scripts/risk-report.mjs
+
+      - name: Upload calibration report
+        uses: actions/upload-artifact@v4
+        with:
+          name: risk-calibration
+          path: risk-report.md
+          retention-days: 90

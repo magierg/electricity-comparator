@@ -22,6 +22,8 @@ describe('plan helpers', () => {
     expect(getProviderLabel('Contact Basic Plan', 'Contact Energy')).toBe(
       'Contact Energy',
     );
+    expect(getProviderLabel('Contact', 'Contact Energy')).toBeUndefined();
+    expect(getProviderLabel('Electric Kiwi', 'Electric Kiwi')).toBeUndefined();
   });
 
   it('summarises flat and time-of-use rates', () => {

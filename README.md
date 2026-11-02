@@ -37,10 +37,15 @@ The app runs at `http://localhost:5173`.
 | `npm run build` | Type-check and build for production |
 | `npm run preview` | Preview the production build |
 | `npm run lint` | Run ESLint |
+| `npm run lint:ci` | Run ESLint with warnings treated as errors |
+| `npm run typecheck` | Type-check without emitting |
 | `npm test` | Run the Jest unit tests |
-| `npm run test:coverage` | Run unit tests with coverage |
+| `npm run test:coverage` | Run unit tests with coverage thresholds |
+| `npm run test:scripts` | Run the Node tests for workflow scripts |
 | `npm run test:e2e` | Run the Playwright end-to-end tests |
+| `npm run test:explore` | Run a bounded agentic exploration with e2e |
 | `npm run data:plans` | Regenerate the plan dataset from the source CSV |
+| `npm run data:plans:check` | Fail if the committed dataset is out of date |
 | `npm run storybook` | Start Storybook |
 | `npm run build-storybook` | Build Storybook |
 
@@ -81,10 +86,38 @@ src/
 ├── App.tsx              # Main comparison flow
 └── main.tsx             # Entry point
 scripts/
-└── build-plans.mjs      # Plan data generator
+├── build-plans.mjs      # Plan data generator
+├── pr-risk.mjs          # Jev risk classifier
+├── explore-gate.mjs     # Exploratory report gate
+├── risk-report.mjs      # Weekly Jev calibration report
+└── setup-labels.sh      # Label bootstrap
 e2e/
 └── main-flow.spec.ts    # Playwright tests
+.github/workflows/       # CI and agent workflows
+.opencode/               # Pipeline agent prompts and skills
+opencode.pipeline.json   # Restricted pipeline-only agent config
+docs/agent-workflow.md   # Agent runbook
+e2e.config.ts            # Agentic exploratory test config
 ```
+
+## Agent workflow
+
+Issues labeled `agent:ready` can be planned or implemented by OpenCode in GitHub
+Actions:
+
+```text
+/oc plan       # read-only implementation and test plan
+/oc implement  # open a PR with the change
+/oc review     # review an existing PR
+/oc fix checks # diagnose and fix CI failures on a PR
+```
+
+Pull requests are checked by CI, classified by Jev, and explored with `e2e` when
+UI behavior changes. Phase 1 auto-merge requires a human approval and only
+applies to low-risk docs-only or tests-only changes.
+
+See [docs/agent-workflow.md](docs/agent-workflow.md) for setup, labels,
+risk calibration, and the override flow.
 
 ## Tech stack
 
@@ -93,5 +126,5 @@ e2e/
 - Tailwind CSS 4
 - Chart.js / react-chartjs-2
 - Jest 30 + Testing Library
-- Playwright
+- Playwright + e2e
 - Storybook 10

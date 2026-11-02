@@ -1,0 +1,154 @@
+name: OpenCode Issue
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  id-token: write
+
+concurrency:
+  group: opencode-issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+env:
+  HUSKY: 0
+  GIT_TERMINAL_PROMPT: 0
+  GH_TOKEN: ${{ github.token }}
+  OPENCODE_CONFIG: ${{ github.workspace }}/opencode.pipeline.json
+
+jobs:
+  plan:
+    if: |
+      github.event.issue.pull_request == null &&
+      contains(github.event.issue.labels.*.name, 'agent:ready') &&
+      (github.event.comment.author_association == 'OWNER' ||
+       github.event.comment.author_association == 'MEMBER' ||
+       github.event.comment.author_association == 'COLLABORATOR') &&
+      (startsWith(github.event.comment.body, '/oc plan') ||
+       startsWith(github.event.comment.body, '/opencode plan'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run OpenCode planner
+        uses: anomalyco/opencode/github@77fc88c8ade8e5a620ebbe1197f3a572d29ae91a
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+        with:
+          model: opencode-go/deepseek-v4.1-flash
+          agent: planner
+          share: false
+
+  implement:
+    if: |
+      github.event.issue.pull_request == null &&
+      contains(github.event.issue.labels.*.name, 'agent:ready') &&
+      (github.event.comment.author_association == 'OWNER' ||
+       github.event.comment.author_association == 'MEMBER' ||
+       github.event.comment.author_association == 'COLLABORATOR') &&
+      (startsWith(github.event.comment.body, '/oc implement') ||
+       startsWith(github.event.comment.body, '/opencode implement'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check for an existing agent PR
+        id: existing
+        run: |
+          count=$(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state open \
+            --json headRefName \
+            --jq '[.[] | select(.headRefName | startswith("opencode/issue${{ github.event.issue.number }}-"))] | length')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          if [ "$count" -gt 0 ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on duplicate work
+        if: steps.existing.outputs.exists == 'true'
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --body "An agent pull request is already open for this issue. Comment on that PR with \`/oc fix checks\` or close it before starting another run."
+
+      - name: Mark issue in progress
+        if: steps.existing.outputs.exists == 'false'
+        run: |
+          gh issue edit "${{ github.event.issue.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --add-label agent:in-progress \
+            --remove-label agent:ready
+
+      - name: Checkout repository
+        if: steps.existing.outputs.exists == 'false'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        if: steps.existing.outputs.exists == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        if: steps.existing.outputs.exists == 'false'
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        if: steps.existing.outputs.exists == 'false'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright browser
+        if: steps.existing.outputs.exists == 'false'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run OpenCode implementer
+        id: opencode
+        if: steps.existing.outputs.exists == 'false'
+        uses: anomalyco/opencode/github@77fc88c8ade8e5a620ebbe1197f3a572d29ae91a
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+        with:
+          model: opencode-go/deepseek-v4.1-flash
+          agent: implementer
+          share: false
+
+      - name: Update issue state
+        if: always() && steps.existing.outputs.exists == 'false'
+        run: |
+          gh issue edit "${{ github.event.issue.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --remove-label agent:in-progress || true
+          if [ "${{ steps.opencode.outcome }}" = "success" ]; then
+            count=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --state open \
+              --json headRefName \
+              --jq '[.[] | select(.headRefName | startswith("opencode/issue${{ github.event.issue.number }}-"))] | length')
+            if [ "$count" -gt 0 ]; then
+              gh issue edit "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --add-label agent:pr
+            else
+              gh issue edit "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --add-label agent:blocked
+            fi
+          else
+            gh issue edit "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --add-label agent:blocked
+          fi

@@ -1,0 +1,53 @@
+name: PR Risk
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+  statuses: write
+
+concurrency:
+  group: pr-risk-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  risk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout trusted base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Classify pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RISK_ENFORCE: ${{ vars.RISK_ENFORCE || 'false' }}
+          JEV_MODEL: ${{ vars.JEV_MODEL || 'jev-1.13-free' }}
+          JEV_FALLBACK_MODEL: ${{ vars.JEV_FALLBACK_MODEL }}
+          MAX_DIFF_CHARS: ${{ vars.MAX_DIFF_CHARS || '60000' }}
+        run: node scripts/pr-risk.mjs
+
+      - name: Upload risk result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: risk-result
+          path: risk-result.json
+          retention-days: 90

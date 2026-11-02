@@ -13,6 +13,9 @@ export default tseslint.config([
     'playwright-report',
     'test-results',
     'storybook-static',
+    '.e2e',
+    '.exploratory',
+    '.opencode',
   ]),
   {
     files: ['**/*.{ts,tsx}'],
@@ -32,6 +35,24 @@ export default tseslint.config([
     languageOptions: {
       globals: {
         ...globals.jest,
+      },
+    },
+  },
+  {
+    files: ['scripts/**/*.mjs'],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
+    files: ['e2e.config.ts', 'tests/**/*.e2e.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
       },
     },
   },

@@ -1,0 +1,145 @@
+name: Exploratory
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, labeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: exploratory-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    if: github.event.action != 'labeled' || github.event.label.name == 'exploratory:run'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      ui: ${{ steps.filter.outputs.ui }}
+    steps:
+      - name: Check for UI or behavior changes
+        id: filter
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          files=$(gh api \
+            "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+            --paginate \
+            --jq '.[].filename')
+          behavior_files=$(printf '%s\n' "$files" \
+            | grep -Ev '(__tests__/|\.(test|spec)\.[cm]?[jt]sx?$)' || true)
+          if printf '%s\n' "$behavior_files" | grep -Eq '^(src/|index\.html|public/|e2e\.config\.ts|vite\.config\.ts)'; then
+            echo "ui=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ui=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  explore:
+    needs: changes
+    if: |
+      needs.changes.outputs.ui == 'true' &&
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install e2e browser
+        run: npx e2e-web install chromium --with-deps
+
+      - name: Explore the app
+        id: explore
+        continue-on-error: true
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          CI: true
+          E2E_TELEMETRY_DISABLED: '1'
+        run: |
+          npx e2e explore \
+            "Explore the app like a first-time user. Exercise the annual estimate, custom hourly usage, CSV upload, plan ranking, filters, current-plan comparison, and peak windows. Verify visible values and labels. For plan rankings, compare the headline annual /year price, not the discounted first-year price. Report only issues with concrete evidence." \
+            --max-steps 8 \
+            --timeout 600000 \
+            --video retain-on-failure \
+            --trace retain-on-failure
+
+      - name: Evaluate exploration report
+        id: gate
+        if: always()
+        continue-on-error: true
+        run: node scripts/explore-gate.mjs
+
+      - name: Comment on pull request
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f exploratory-comment.md ]; then
+            gh pr comment "${{ github.event.pull_request.number }}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body-file exploratory-comment.md
+          fi
+
+      - name: Update exploratory label
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for label in exploratory:passed exploratory:findings exploratory:blocked exploratory:accepted exploratory:run; do
+            gh pr edit "${{ github.event.pull_request.number }}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --remove-label "$label" 2>/dev/null || true
+          done
+          verdict="${{ steps.gate.outputs.verdict }}"
+          if [ -n "$verdict" ]; then
+            gh label create "exploratory:$verdict" \
+              --repo "$GITHUB_REPOSITORY" \
+              --color "6e7781" \
+              --description "Managed by the exploratory workflow" 2>/dev/null || true
+            gh pr edit "${{ github.event.pull_request.number }}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --add-label "exploratory:$verdict"
+          fi
+
+      - name: Upload exploration report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exploratory-report
+          path: .e2e/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Enforce exploratory verdict
+        if: steps.gate.outputs.verdict != 'passed'
+        run: |
+          echo "Exploratory verdict: ${{ steps.gate.outputs.verdict || 'blocked' }}"
+          exit 1

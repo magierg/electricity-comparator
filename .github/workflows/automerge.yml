@@ -1,0 +1,88 @@
+name: Auto-merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR: ${{ github.event.pull_request.number }}
+      REQUIRE_APPROVAL: ${{ vars.AUTOMERGE_REQUIRE_APPROVAL || 'true' }}
+    steps:
+      - name: Evaluate auto-merge eligibility
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          pr_json=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json isDraft,reviewDecision,labels,autoMergeRequest)
+          is_draft=$(jq -r '.isDraft' <<< "$pr_json")
+          review=$(jq -r '.reviewDecision // ""' <<< "$pr_json")
+          labels=$(jq -r '.labels[].name' <<< "$pr_json")
+          auto_merge=$(jq -r '.autoMergeRequest // empty' <<< "$pr_json")
+
+          has_label() {
+            grep -qx "$1" <<< "$labels"
+          }
+
+          eligible=true
+          reasons=()
+
+          if [ "$is_draft" = "true" ]; then
+            eligible=false
+            reasons+=("draft pull request")
+          fi
+
+          if ! has_label "risk:low"; then
+            eligible=false
+            reasons+=("risk is not low")
+          fi
+
+          if ! has_label "automerge:eligible"; then
+            eligible=false
+            reasons+=("risk workflow has not marked it eligible")
+          fi
+
+          if has_label "do-not-merge"; then
+            eligible=false
+            reasons+=("do-not-merge label")
+          fi
+
+          if has_label "change:ui" && ! has_label "exploratory:passed" && ! has_label "exploratory:accepted"; then
+            eligible=false
+            reasons+=("UI change has no passed or accepted exploratory run")
+          fi
+
+          if [ "$REQUIRE_APPROVAL" != "false" ] && [ "$review" != "APPROVED" ]; then
+            eligible=false
+            reasons+=("human approval required")
+          fi
+
+          if [ "$eligible" = "true" ]; then
+            gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --auto --squash --delete-branch
+            if [ -z "$auto_merge" ] || [ "$auto_merge" = "null" ]; then
+              gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body \
+                "Auto-merge enabled: low risk, required checks configured, and phase 1 approval satisfied."
+            fi
+            echo "Auto-merge enabled."
+          else
+            if [ -n "$auto_merge" ] && [ "$auto_merge" != "null" ]; then
+              gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --disable-auto || true
+            fi
+            printf 'Auto-merge blocked: %s\n' "${reasons[*]}"
+          fi

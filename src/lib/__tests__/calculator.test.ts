@@ -170,6 +170,40 @@ describe('calculatePlanCost', () => {
     expect(result!.firstYearEstimate).toBeCloseTo(2190 - 100 - 219);
   });
 
+  it('handles zero usage without dividing by zero', () => {
+    const testPlan = plan('zero', 'inclusive', {
+      standard: variant({ dailyCharge: 1, inclusiveRate: 0.25 }),
+    });
+    const emptyUsage: UsagePattern = {
+      hourlyUsage: Array(24).fill(0),
+      totalDaily: 0,
+    };
+
+    const result = calculatePlanCost(emptyUsage, testPlan, 'standard', schedule);
+
+    expect(result!.breakdown.effectiveRate).toBe(0);
+    expect(result!.breakdown.totalDaily).toBe(1);
+  });
+
+  it('scales the free-power value from the benchmark to annual usage', () => {
+    const testPlan = plan('free-power', 'inclusive', {
+      standard: variant({
+        dailyCharge: 0,
+        inclusiveRate: 0.2,
+        freePowerValue: 100,
+        freePowerBenchmarkKwh: 10_000,
+      }),
+    });
+
+    const result = calculatePlanCost(usage, testPlan, 'standard', schedule);
+    const expectedDiscount = 100 * ((24 * 365) / 10_000);
+
+    expect(result!.freePowerDiscount).toBeCloseTo(expectedDiscount);
+    expect(result!.firstYearEstimate).toBeCloseTo(
+      result!.breakdown.totalYearly - expectedDiscount,
+    );
+  });
+
   it('uses the variant-specific display name when present', () => {
     const testPlan = plan('named', 'inclusive', {
       standard: variant({ inclusiveRate: 0.2 }),

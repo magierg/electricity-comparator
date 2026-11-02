@@ -95,9 +95,10 @@ export function calculatePlanCost(
   };
 
   const percentageDiscount = (breakdown.totalYearly * (variant.percentDiscount ?? 0)) / 100;
+  const annualUsage = totalUsage * DAYS_PER_YEAR;
   const freePowerDiscount =
     variant.freePowerValue && variant.freePowerBenchmarkKwh
-      ? variant.freePowerValue * (totalUsage / variant.freePowerBenchmarkKwh)
+      ? variant.freePowerValue * (annualUsage / variant.freePowerBenchmarkKwh)
       : 0;
   const firstYearEstimate = Math.max(
     0,
