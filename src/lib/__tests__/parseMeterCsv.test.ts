@@ -65,6 +65,48 @@ describe('parseMeterCsv', () => {
     expect(result.days[0].totalDaily).toBe(48);
   });
 
+  it('rejects an empty file', () => {
+    expect(() => parseMeterCsv('')).toThrow(/CSV file is empty/i);
+  });
+
+  it('rejects a file with only one interval column', () => {
+    expect(() =>
+      parseMeterCsv(csv([row('1/6/2025', 1)], ['Date', halfHourLabels()[0]])),
+    ).toThrow(/Could not find any 30-minute usage columns/i);
+  });
+
+  it('rejects an odd number of interval columns', () => {
+    expect(() =>
+      parseMeterCsv(
+        csv(
+          [['ICP1', 'METER1', 'Consumption', '1/6/2025', '1', '1', '1'].join(',')],
+          ['ICP', 'Meter number', 'Meter element', 'Date', ...halfHourLabels().slice(0, 3)],
+        ),
+      ),
+    ).toThrow(/Expected an even number of 30-minute columns/i);
+  });
+
+  it('warns when the interval shape is incomplete', () => {
+    const result = parseMeterCsv(
+      csv(
+        [['ICP1', 'METER1', 'Consumption', '1/6/2025', '1', '1', '1', '1'].join(',')],
+        ['ICP', 'Meter number', 'Meter element', 'Date', ...halfHourLabels().slice(0, 4)],
+      ),
+    );
+
+    expect(result.days).toHaveLength(1);
+    expect(result.warnings.join(' ')).toMatch(/instead of 48/i);
+  });
+
+  it('warns when rows are skipped', () => {
+    const result = parseMeterCsv(
+      csv([row('1/6/2025', 1), row('not-a-date', 1)]),
+    );
+
+    expect(result.days).toHaveLength(1);
+    expect(result.warnings.join(' ')).toMatch(/some rows were skipped/i);
+  });
+
   it('rejects a file without a date and interval columns', () => {
     expect(() => parseMeterCsv('not,a,valid,csv\n1,2,3,4')).toThrow(
       /Invalid CSV format/i,

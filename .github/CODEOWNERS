@@ -1,0 +1,16 @@
+* @magierg
+
+.github/workflows/ @magierg
+.github/ISSUE_TEMPLATE/ @magierg
+scripts/ @magierg
+src/data/ @magierg
+src/lib/calculator.ts @magierg
+src/lib/plans.ts @magierg
+src/lib/usage.ts @magierg
+src/constants.ts @magierg
+src/types.ts @magierg
+package.json @magierg
+package-lock.json @magierg
+opencode.json @magierg
+AGENTS.md @magierg
+.opencode/ @magierg

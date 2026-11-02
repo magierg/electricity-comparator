@@ -7,6 +7,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+
 node_modules
 dist
 dist-ssr
@@ -16,6 +21,11 @@ dist-ssr
 test-results/
 playwright-report/
 coverage/
+.e2e/
+.exploratory/
+risk-result.json
+risk-report.md
+exploratory-comment.md
 
 # Editor directories and files
 .vscode/*

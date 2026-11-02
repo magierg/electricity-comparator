@@ -1,0 +1,63 @@
+name: Risk acceptance
+
+on:
+  pull_request:
+    types: [labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  statuses: write
+
+jobs:
+  override:
+    if: github.event.label.name == 'risk:accepted'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Apply risk override
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          ACTOR: ${{ github.event.sender.login }}
+          ACTION: ${{ github.event.action }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          allowed=false
+          if [ "$ACTOR" = "${{ github.repository_owner }}" ]; then
+            allowed=true
+          else
+            permission=$(gh api "repos/$REPO/collaborators/$ACTOR/permission" --jq .permission 2>/dev/null || true)
+            case "$permission" in
+              admin|maintain|write) allowed=true ;;
+            esac
+          fi
+          if [ "$allowed" != "true" ]; then
+            echo "User $ACTOR does not have write permission"
+            exit 1
+          fi
+
+          if [ "$ACTION" = "labeled" ]; then
+            state=success
+            description="Accepted by @$ACTOR"
+          else
+            state=failure
+            description="Risk acceptance removed by @$ACTOR"
+          fi
+
+          gh api "repos/$REPO/statuses/$HEAD_SHA" \
+            -f state="$state" \
+            -f context=risk \
+            -f description="$description" \
+            -f target_url="$RUN_URL"
+
+          if [ "$ACTION" = "labeled" ]; then
+            gh pr comment "$PR" --repo "$REPO" --body \
+              "Risk gate overridden by @$ACTOR. Auto-merge eligibility is unchanged; a deliberate manual merge may still be required."
+          fi

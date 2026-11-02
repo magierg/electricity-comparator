@@ -101,14 +101,6 @@ function toGstInclusive(value) {
   return value === null || value === undefined ? undefined : value * GST_FACTOR;
 }
 
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
 const SECTIONS = {
   standard: {
     nameRow: 1,

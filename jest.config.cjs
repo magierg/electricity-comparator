@@ -21,4 +21,12 @@ module.exports = {
     '!src/data/wellington-plans.ts',
     '!src/**/*.stories.tsx',
   ],
+  coverageThreshold: {
+    global: {
+      statements: 50,
+      branches: 30,
+      functions: 40,
+      lines: 50,
+    },
+  },
 };

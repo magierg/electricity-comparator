@@ -1,0 +1,144 @@
+name: OpenCode PR
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  id-token: write
+
+concurrency:
+  group: opencode-pr-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+env:
+  HUSKY: 0
+  GIT_TERMINAL_PROMPT: 0
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  review:
+    if: |
+      github.event.issue.pull_request != null &&
+      (github.event.comment.author_association == 'OWNER' ||
+       github.event.comment.author_association == 'MEMBER' ||
+       github.event.comment.author_association == 'COLLABORATOR') &&
+      (startsWith(github.event.comment.body, '/oc review') ||
+       startsWith(github.event.comment.body, '/opencode review'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Inspect pull request
+        id: pr
+        run: |
+          gh pr view "${{ github.event.issue.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json headRefName,isCrossRepository \
+            --jq '"head=\(.headRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
+
+      - name: Refuse fork pull requests
+        if: steps.pr.outputs.cross == 'true'
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --body "OpenCode PR commands are limited to branches in this repository. Fork pull requests need a manual review."
+
+      - name: Checkout pull request
+        if: steps.pr.outputs.cross == 'false'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.head }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        if: steps.pr.outputs.cross == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        if: steps.pr.outputs.cross == 'false'
+        run: npm ci
+
+      - name: Run OpenCode reviewer
+        if: steps.pr.outputs.cross == 'false'
+        uses: anomalyco/opencode/github@77fc88c8ade8e5a620ebbe1197f3a572d29ae91a
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+        with:
+          model: opencode/deepseek-v4.1-flash
+          agent: reviewer
+          share: false
+
+  fix:
+    if: |
+      github.event.issue.pull_request != null &&
+      (github.event.comment.author_association == 'OWNER' ||
+       github.event.comment.author_association == 'MEMBER' ||
+       github.event.comment.author_association == 'COLLABORATOR') &&
+      (startsWith(github.event.comment.body, '/oc fix checks') ||
+       startsWith(github.event.comment.body, '/opencode fix checks'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Inspect pull request
+        id: pr
+        run: |
+          gh pr view "${{ github.event.issue.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json headRefName,isCrossRepository \
+            --jq '"head=\(.headRefName)\ncross=\(.isCrossRepository)"' >> "$GITHUB_OUTPUT"
+
+      - name: Refuse fork pull requests
+        if: steps.pr.outputs.cross == 'true'
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --body "OpenCode PR commands are limited to branches in this repository. Fork pull requests need a manual fix."
+
+      - name: Checkout pull request
+        if: steps.pr.outputs.cross == 'false'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.head }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        if: steps.pr.outputs.cross == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        if: steps.pr.outputs.cross == 'false'
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        if: steps.pr.outputs.cross == 'false'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright browser
+        if: steps.pr.outputs.cross == 'false'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run OpenCode babysitter
+        if: steps.pr.outputs.cross == 'false'
+        uses: anomalyco/opencode/github@77fc88c8ade8e5a620ebbe1197f3a572d29ae91a
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+        with:
+          model: opencode/deepseek-v4.1-flash
+          agent: babysitter
+          share: false

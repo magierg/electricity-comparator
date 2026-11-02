@@ -1,0 +1,66 @@
+name: Agent task
+description: A scoped issue that the OpenCode agent can plan or implement.
+title: ''
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Add the `agent:ready` label only after the issue is clear enough for an
+        agent. The maintainer starts work with `/oc plan` or `/oc implement`.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is wrong or missing, and who is affected?
+      placeholder: The current-plan comparison shows the wrong savings when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: What must be true when this is done? Include observable behavior.
+      placeholder: |
+        - Selecting a current plan shows the correct annual saving.
+        - A regression test covers the calculation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and affected areas
+      description: Files, features, or data involved. Mention if money or generated data is involved.
+      placeholder: src/lib/calculator.ts, plan ranking, current-plan comparison
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      description: What should the agent not change?
+      placeholder: Do not refresh the plan dataset or change dependencies.
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: How should a human verify the result? Commands, flows, or screenshots.
+      placeholder: |
+        npm run test
+        npm run test:e2e
+        Select a current plan and compare the displayed savings.
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Expected risk
+      options:
+        - Low — docs, tests, copy, or small UI
+        - Medium — bounded behavior change
+        - High — money calculation, generated data, dependencies, or CI
+    validations:
+      required: true
