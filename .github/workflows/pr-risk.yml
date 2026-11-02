@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
   issues: write
   statuses: write
 
@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  risk:
+  classify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
