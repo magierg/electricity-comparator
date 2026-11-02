@@ -2,27 +2,26 @@ import { render, screen } from '@testing-library/react';
 import SectionHeader from '../SectionHeader';
 
 describe('SectionHeader', () => {
-  it('renders icon and title', () => {
+  it('renders the title, description, icon, and action', () => {
     render(
       <SectionHeader
         icon={<svg data-testid="icon" />}
         title="Header Title"
-        colorClass="bg-pink-100"
-      />
+        description="A short description"
+        action={<button type="button">Action</button>}
+      />,
     );
-    expect(screen.getByText('Header Title')).toBeInTheDocument();
+
+    expect(screen.getByRole('heading', { name: 'Header Title' })).toBeInTheDocument();
+    expect(screen.getByText('A short description')).toBeInTheDocument();
     expect(screen.getByTestId('icon')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Action' })).toBeInTheDocument();
   });
 
-  it('sets aria-label and tabIndex on icon', () => {
-    render(
-      <SectionHeader
-        icon={<svg data-testid="icon" />}
-        title="Header Title"
-        colorClass="bg-pink-100"
-      />
-    );
-    const iconDiv = screen.getByLabelText('Header Title icon');
-    expect(iconDiv).toHaveAttribute('tabIndex', '0');
+  it('does not make the icon focusable', () => {
+    render(<SectionHeader icon={<svg data-testid="icon" />} title="Header Title" />);
+
+    const icon = screen.getByTestId('icon');
+    expect(icon.closest('[tabindex]')).toBeNull();
   });
 });

@@ -1,100 +1,97 @@
-# Electricity Plan Comparator
+# Wellington Electricity Plan Comparison
 
-A modern React application for comparing different electricity plans (constant rate vs time-of-use) based on your daily usage patterns.
+A React app for comparing real Wellington electricity plans against your household usage. It estimates annual, monthly, and daily costs, ranks plans by ongoing annual cost, and shows potential savings against a plan you select as your current one.
+
+The plan data comes from the **MoneyHub Power Comparison, October 2026 (Wellington)** dataset. All rates, daily charges, and the Electricity Authority levy are stored **GST-inclusive**.
 
 ## Features
 
-- **Usage Pattern Input**: Enter your hourly electricity usage or select from typical patterns
-- **Plan Comparison**: Compare constant rate vs time-of-use electricity plans
-- **Cost Calculation**: Real-time cost calculations and comparisons
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Interactive UI**: Modern, clean interface built with Tailwind CSS
+- **Real plan data** — 17 Wellington plans across standard, EV, and bundle categories.
+- **Low and standard user rates** — separate rates for each user type, with an automatic 8,000 kWh/year suggestion.
+- **Three usage inputs**
+  - Quick annual estimate with evening, daytime, or flat usage shapes.
+  - Custom 24-hour usage entry.
+  - Half-hour meter CSV upload, with average or single-day selection.
+- **Realistic cost calculation** — flat, peak/off-peak, and peak/shoulder/off-peak pricing, daily charges, and EA levies.
+- **Configurable peak windows** — the source data does not publish retailer-specific peak times, so peak and shoulder windows are adjustable.
+- **Plan ranking and filters** — filter by provider or plan type, then expand any plan for a full cost breakdown.
+- **Current-plan comparison** — select your current plan to see estimated annual savings.
+- **First-year estimate** — shows the effect of one-off credits, percentage discounts, and free-power hours alongside the ongoing annual cost.
 
-## Tech Stack
+## Getting started
 
-- **Frontend**: React 19 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Charts**: Chart.js (ready for visualization features)
-- **Development**: ESLint for code quality
+Requires **Node.js 24 LTS**.
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v18 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-
-Start the development server:
 ```bash
+npm install
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
+The app runs at `http://localhost:5173`.
 
-### Building
+## Scripts
 
-Build the project for production:
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Run ESLint |
+| `npm test` | Run the Jest unit tests |
+| `npm run test:coverage` | Run unit tests with coverage |
+| `npm run test:e2e` | Run the Playwright end-to-end tests |
+| `npm run data:plans` | Regenerate the plan dataset from the source CSV |
+| `npm run storybook` | Start Storybook |
+| `npm run build-storybook` | Build Storybook |
+
+## Plan data
+
+The generated dataset lives in `src/data/wellington-plans.ts`. To regenerate it:
+
 ```bash
-npm run build
+npm run data:plans
 ```
 
-### Preview
+The generator reads `data/october_2026_moneyhub_wellington.csv`, maps the standard and low-user sections, converts the source rates to GST-inclusive values, and validates the result against MoneyHub's published annual totals before and after discounts. It writes a max delta of about $0.06. The workbook snapshot is kept at `data/october_2026_moneyhub_power_comparison_-_published.xlsm`. To refresh from a new workbook, export the Wellington sheet as a values-only CSV, replace the CSV, then run `npm run data:plans`.
 
-Preview the production build:
-```bash
-npm run preview
-```
+Two source anomalies are skipped during annual validation and documented in `scripts/build-plans.mjs`:
 
-## Usage
+- EV plan annual estimates include extra EV charging that is not reflected in the published household rates.
+- Octopus low-user annual summaries double-count the variable charge.
 
-1. **Select Usage Pattern**: Choose from predefined patterns (Residential, Business, Flat) or enter custom hourly usage
-2. **Configure Plans**: Adjust electricity plan rates and peak hours
-3. **Compare Costs**: View side-by-side comparison of daily, monthly, and yearly costs
-4. **Identify Savings**: See which plan offers the best value for your usage pattern
+The detailed rates are still used for those plans; only the source annual-estimate comparison is skipped.
 
-## Plan Types
+## Assumptions and limitations
 
-### Constant Rate Plan
-- Single rate applied to all usage throughout the day
-- Simple billing structure
-- Predictable costs
+- **Peak windows are not in the source data.** The app defaults to a configurable peak/shoulder schedule and applies it to every plan. Change the windows in the "Peak windows" card to match your plan.
+- **Usage is treated as a representative day.** Uploaded data is averaged across the selected days unless you choose a specific day.
+- **Estimates are a guide.** Retailer pricing and discount eligibility change. Confirm current rates and terms with the provider before switching.
+- The dataset is Wellington-only and based on October 2026 pricing.
+- Free-power offers are estimated from the source's benchmark usage and scaled to your annual usage; actual value depends on when you use the free hours.
 
-### Time-of-Use Plan
-- Different rates for peak and off-peak hours
-- Lower rates during off-peak periods
-- Potential savings for users who can shift usage
+## Project structure
 
-## Project Structure
-
-```
+```text
 src/
-├── components/
-│   ├── UsageInput.tsx    # Usage pattern input component
-│   └── PlanComparison.tsx # Plan comparison and cost calculation
-├── types.ts              # TypeScript interfaces
-├── App.tsx               # Main application component
-└── main.tsx              # Application entry point
+├── components/          # UI components
+├── data/                # Generated plan dataset
+├── lib/                 # Cost calculator, CSV parser, formatting, usage helpers
+├── types.ts             # Shared types
+├── constants.ts         # GST, thresholds, peak presets, palette
+├── App.tsx              # Main comparison flow
+└── main.tsx             # Entry point
+scripts/
+└── build-plans.mjs      # Plan data generator
+e2e/
+└── main-flow.spec.ts    # Playwright tests
 ```
 
-## Contributing
+## Tech stack
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
+- React 19 + TypeScript
+- Vite 8
+- Tailwind CSS 4
+- Chart.js / react-chartjs-2
+- Jest 30 + Testing Library
+- Playwright
+- Storybook 10
