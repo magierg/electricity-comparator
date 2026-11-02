@@ -98,7 +98,7 @@ jobs:
       - name: Upload coverage reports
         uses: codecov/codecov-action@v7
         with:
-          file: ./coverage/lcov.info
+          files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
