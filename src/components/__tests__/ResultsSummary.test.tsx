@@ -52,10 +52,15 @@ describe('ResultsSummary', () => {
     ).toBeInTheDocument();
   });
 
-  it('prompts for usage and a current plan when they are missing', () => {
+  it('prompts for usage when the best result is missing', () => {
     renderSummary({ best: undefined, current: undefined });
 
     expect(screen.getByText(/add some usage to see the best plan/i)).toBeInTheDocument();
+  });
+
+  it('prompts for a current plan when only the current plan is missing', () => {
+    renderSummary({ best: results[0], current: undefined });
+
     expect(
       screen.getByText(/choose your current plan below to see your estimated savings/i),
     ).toBeInTheDocument();

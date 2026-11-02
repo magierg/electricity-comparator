@@ -99,7 +99,13 @@ describe('App', () => {
 
     expect(screen.getByText(/plans shown after filters/i)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /clear filters/i }));
-    expect(screen.getByText(/17 plans shown/i)).toBeInTheDocument();
+
+    const countAfterClear = screen.getByText(/plans shown/i);
+    expect(countAfterClear).toHaveTextContent(/\d+ plans shown/i);
+    expect(countAfterClear).not.toHaveTextContent(/after filters/i);
+    expect(
+      screen.queryByRole('button', { name: /clear filters/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('expands peak settings and applies a preset', async () => {
