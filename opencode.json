@@ -94,6 +94,8 @@
           "gh pr diff*": "allow",
           "gh pr checks*": "allow",
           "gh run view*": "allow",
+          "gh run list*": "allow",
+          "gh run download*": "allow",
           "gh issue view*": "allow"
         },
         "webfetch": "deny",
@@ -200,6 +202,8 @@
           "gh pr diff*": "allow",
           "gh pr checks*": "allow",
           "gh run view*": "allow",
+          "gh run list*": "allow",
+          "gh run download*": "allow",
           "gh issue view*": "allow"
         },
         "webfetch": "deny",

@@ -211,6 +211,27 @@ The pstack source is pinned in `.opencode/PSTACK_VERSION`. Do not use
 - Jobs have `timeout-minutes` and PR concurrency groups.
 - `ci.yml` cancels superseded runs.
 
+## Debugging check failures
+
+Use the authenticated `gh` CLI, not the browser:
+
+```bash
+gh pr checks <pr-number>
+gh run list --limit 20
+gh run view <run-id>
+gh run view <run-id> --log-failed
+gh run download <run-id> -n <artifact-name> -D /tmp/ci-artifacts
+```
+
+The `gh-actions-debug` skill in `.opencode/skills/` contains the detailed
+triage flow. Pipeline agents can use read-only `gh` commands.
+
+To install GitHub's general-purpose CLI skill for OpenCode:
+
+```bash
+gh skill install cli/cli gh --agent opencode --scope project
+```
+
 ## Troubleshooting
 
 - **No PR created**: check the OpenCode action comment on the issue. The action

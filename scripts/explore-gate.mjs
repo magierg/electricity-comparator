@@ -81,12 +81,16 @@ async function main() {
         finding.kind === 'issue' && Number(finding.severity ?? 0) >= MIN_BLOCKING_SEVERITY,
     );
 
+    const steps = Array.isArray(explore.steps) ? explore.steps : [];
     const allStepsBlocked =
-      Array.isArray(explore.steps) &&
-      explore.steps.length > 0 &&
-      explore.steps.every((step) => step.status === 'blocked');
+      steps.length > 0 && steps.every((step) => step.status === 'blocked');
 
-    if (explore.ended === 'blocked' || (allStepsBlocked && findings.length === 0)) {
+    if (
+      explore.ended === 'blocked' ||
+      explore.ended === 'aborted' ||
+      steps.length === 0 ||
+      (allStepsBlocked && findings.length === 0)
+    ) {
       verdict = 'blocked';
     } else if (blocking.length > 0) {
       verdict = 'findings';

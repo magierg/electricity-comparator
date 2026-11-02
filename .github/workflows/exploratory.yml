@@ -117,6 +117,10 @@ jobs:
           done
           verdict="${{ steps.gate.outputs.verdict }}"
           if [ -n "$verdict" ]; then
+            gh label create "exploratory:$verdict" \
+              --repo "$GITHUB_REPOSITORY" \
+              --color "6e7781" \
+              --description "Managed by the exploratory workflow" 2>/dev/null || true
             gh pr edit "${{ github.event.pull_request.number }}" \
               --repo "$GITHUB_REPOSITORY" \
               --add-label "exploratory:$verdict"
