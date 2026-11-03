@@ -2,25 +2,29 @@ import type { E2EConfig } from 'e2e';
 import { web } from '@e2e-dev/web';
 import { opencodeConsole } from 'e2e/oauth/opencode-console';
 
+const previewUrl = process.env.E2E_BASE_URL;
+
 export default {
   targets: [
     {
       engine: web(),
-      app: {
-        url: 'http://127.0.0.1:5173',
-        command: {
-          executable: 'node',
-          args: [
-            'node_modules/vite/bin/vite.js',
-            '--host',
-            '127.0.0.1',
-            '--port',
-            '5173',
-            '--strictPort',
-          ],
-          log: '.e2e/logs/app.log',
-        },
-      },
+      app: previewUrl
+        ? { url: previewUrl }
+        : {
+            url: 'http://127.0.0.1:5173',
+            command: {
+              executable: 'node',
+              args: [
+                'node_modules/vite/bin/vite.js',
+                '--host',
+                '127.0.0.1',
+                '--port',
+                '5173',
+                '--strictPort',
+              ],
+              log: '.e2e/logs/app.log',
+            },
+          },
     },
   ],
   timeout: 120_000,

@@ -140,7 +140,9 @@ skipped.
 
 The model is `opencodeConsole('go/deepseek-v4.1-flash')`, billed to the Go
 subscription. The explorer drives the running app through `e2e.config.ts`; it
-does not call production services.
+does not call production services. By default it starts the local Vite app. Set
+`EXPLORE_USE_PREVIEW=true` to wait for the PR's Vercel preview deployment and
+explore that URL instead.
 
 Verdicts:
 
@@ -151,6 +153,28 @@ Verdicts:
 
 To re-run after new commits, add the `exploratory:run` label. The workflow
 removes it after the run so it can be added again later.
+
+## Preview deployments
+
+Vercel builds a preview deployment for every pull request. `preview-e2e.yml`
+runs Playwright against the preview when Vercel reports a successful deployment.
+`playwright.config.ts` and `e2e.config.ts` use `E2E_BASE_URL` when it is set, so
+the same tests run locally or against a preview.
+
+Setup:
+
+1. Import the repository into Vercel.
+2. Keep the Vite preset: install `npm ci`, build `npm run build`, output `dist`
+   (also pinned in `vercel.json`).
+3. Leave preview deployments enabled; `main` is the production branch.
+4. Optionally add the `preview-e2e` check to branch protection.
+
+No Vercel token is stored in GitHub. The Vercel GitHub App creates the
+deployments, and the workflow reads the deployment status URL.
+
+Exploratory testing stays local by default. Set the repository variable
+`EXPLORE_USE_PREVIEW=true` to make `exploratory.yml` wait for the latest
+successful preview deployment for the PR head and run the explorer against it.
 
 ## Calibration
 

@@ -8,6 +8,7 @@ permissions:
   contents: read
   pull-requests: write
   issues: write
+  deployments: read
 
 concurrency:
   group: exploratory-${{ github.event.pull_request.number }}
@@ -76,11 +77,37 @@ jobs:
       - name: Install e2e browser
         run: npx e2e-web install chromium --with-deps
 
+      - name: Resolve preview deployment
+        id: preview
+        if: vars.EXPLORE_USE_PREVIEW == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sha="${{ github.event.pull_request.head.sha }}"
+          for attempt in $(seq 1 30); do
+            deployment_id=$(gh api \
+              "repos/$GITHUB_REPOSITORY/deployments?sha=$sha&per_page=100" \
+              --jq '[.[] | select(.environment | startswith("Preview"))][0].id // empty')
+            if [ -n "$deployment_id" ]; then
+              url=$(gh api \
+                "repos/$GITHUB_REPOSITORY/deployments/$deployment_id/statuses" \
+                --jq '[.[] | select(.state == "success")][0].target_url // empty')
+              if [ -n "$url" ]; then
+                echo "url=$url" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            sleep 10
+          done
+          echo "No successful preview deployment found for $sha" >&2
+          exit 1
+
       - name: Explore the app
         id: explore
         continue-on-error: true
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          E2E_BASE_URL: ${{ steps.preview.outputs.url }}
           CI: true
           E2E_TELEMETRY_DISABLED: '1'
         run: |

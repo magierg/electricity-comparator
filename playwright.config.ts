@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const previewUrl = process.env.E2E_BASE_URL;
+
 export default defineConfig({
   testDir: './e2e',
   timeout: 20 * 1000,
@@ -12,14 +14,16 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   // reporter: 'html', // Disabled report serving for CI/local runs
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: previewUrl ?? 'http://localhost:5173',
     trace: 'on-first-retry',
     ...devices['Desktop Chrome'],
   },
-  webServer: {
-    command: 'vite',
-    port: 5173,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  webServer: previewUrl
+    ? undefined
+    : {
+        command: 'vite',
+        port: 5173,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000,
+      },
 });
