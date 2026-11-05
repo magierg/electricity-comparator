@@ -1,0 +1,121 @@
+import { DAYS_PER_YEAR, DEFAULT_PEAK_SCHEDULE } from '../../constants';
+import { calculatePlanCost } from '../calculator';
+import type { ElectricityPlan, PeakSchedule, UsagePattern } from '../../types';
+
+function usage(hourlyUsage: number[]): UsagePattern {
+  return {
+    hourlyUsage,
+    totalDaily: hourlyUsage.reduce((sum, value) => sum + value, 0),
+  };
+}
+
+describe('money invariants', () => {
+  it('keeps GST-inclusive energy, levy, and daily charge separate', () => {
+    const plan: ElectricityPlan = {
+      id: 'eval-inclusive',
+      provider: 'Eval',
+      name: 'Eval Inclusive',
+      category: 'standard',
+      pricing: 'inclusive',
+      variants: {
+        standard: {
+          dailyCharge: 2,
+          inclusiveRate: 0.25,
+          levy: 0.01,
+        },
+      },
+    };
+
+    const result = calculatePlanCost(
+      usage(Array(24).fill(1)),
+      plan,
+      'standard',
+      DEFAULT_PEAK_SCHEDULE,
+    );
+    expect(result).not.toBeNull();
+
+    expect(result?.breakdown.totalUsage).toBe(24);
+    expect(result?.breakdown.energyCost).toBeCloseTo(6, 10);
+    expect(result?.breakdown.levyCost).toBeCloseTo(0.24, 10);
+    expect(result?.breakdown.totalDaily).toBeCloseTo(8.24, 10);
+    expect(result?.breakdown.totalYearly).toBeCloseTo(8.24 * DAYS_PER_YEAR, 10);
+    expect(result?.firstYearEstimate).toBeCloseTo(8.24 * DAYS_PER_YEAR, 10);
+  });
+
+  it('applies peak, shoulder, and off-peak rates to the right hours', () => {
+    const plan: ElectricityPlan = {
+      id: 'eval-tiered',
+      provider: 'Eval',
+      name: 'Eval Tiered',
+      category: 'standard',
+      pricing: 'peak-shoulder-offpeak',
+      variants: {
+        standard: {
+          dailyCharge: 0,
+          peakRate: 0.4,
+          shoulderRate: 0.3,
+          offPeakRate: 0.2,
+          levy: 0,
+        },
+      },
+    };
+    const hourlyUsage = Array(24).fill(0);
+    hourlyUsage[7] = 1;
+    hourlyUsage[9] = 1;
+    hourlyUsage[10] = 1;
+    const schedule: PeakSchedule = { peak: [7], shoulder: [9] };
+
+    const result = calculatePlanCost(usage(hourlyUsage), plan, 'standard', schedule);
+    expect(result).not.toBeNull();
+
+    expect(result?.breakdown.peakUsage).toBe(1);
+    expect(result?.breakdown.peakCost).toBeCloseTo(0.4, 10);
+    expect(result?.breakdown.shoulderUsage).toBe(1);
+    expect(result?.breakdown.shoulderCost).toBeCloseTo(0.3, 10);
+    expect(result?.breakdown.offPeakUsage).toBe(1);
+    expect(result?.breakdown.offPeakCost).toBeCloseTo(0.2, 10);
+    expect(result?.breakdown.energyCost).toBeCloseTo(0.9, 10);
+    expect(result?.breakdown.totalYearly).toBeCloseTo(0.9 * DAYS_PER_YEAR, 10);
+  });
+
+  it('subtracts cash, percentage, and free-power discounts once', () => {
+    const plan: ElectricityPlan = {
+      id: 'eval-discounts',
+      provider: 'Eval',
+      name: 'Eval Discounts',
+      category: 'standard',
+      pricing: 'inclusive',
+      variants: {
+        standard: {
+          dailyCharge: 0,
+          inclusiveRate: 0.2,
+          levy: 0,
+          cashDiscount: 50,
+          percentDiscount: 10,
+          freePowerValue: 100,
+          freePowerBenchmarkKwh: 1000,
+        },
+      },
+    };
+
+    const result = calculatePlanCost(
+      usage(Array(24).fill(1)),
+      plan,
+      'standard',
+      DEFAULT_PEAK_SCHEDULE,
+    );
+    expect(result).not.toBeNull();
+
+    const totalYearly = 24 * 0.2 * DAYS_PER_YEAR;
+    const annualUsage = 24 * DAYS_PER_YEAR;
+    const freePower = 100 * (annualUsage / 1000);
+    const percentage = totalYearly * 0.1;
+
+    expect(result?.breakdown.totalYearly).toBeCloseTo(totalYearly, 10);
+    expect(result?.freePowerDiscount).toBeCloseTo(freePower, 10);
+    expect(result?.firstYearEstimate).toBeCloseTo(
+      totalYearly - 50 - percentage - freePower,
+      10,
+    );
+  });
+});

@@ -23,6 +23,7 @@ playwright-report/
 coverage/
 .e2e/
 .exploratory/
+eval-results/
 risk-result.json
 risk-report.md
 exploratory-comment.md

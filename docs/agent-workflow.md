@@ -192,6 +192,18 @@ The weekly `Risk calibration` workflow updates an issue with:
 Use this to decide when to enable `RISK_ENFORCE` and whether the threshold in
 `scripts/pr-risk.mjs` is too loose or too strict.
 
+## Agent evals
+
+`evals/` contains regression evals for the coding harness, not the app. They run
+when `AGENTS.md`, `opencode*.json`, `.opencode/**`, or `evals/**` changes, and
+nightly at 02:00 UTC. Each case snapshots the repository before a known task,
+copies the current harness in, runs the implementer, and grades the diff,
+policy, PR body, and hidden tests.
+
+Add a case for every reverted or manually repaired agent PR. See
+`evals/README.md` for the schema and local commands. Pipeline agents are denied
+edits to `evals/**`.
+
 ## Local and pipeline permissions
 
 There are two configs:
@@ -209,9 +221,9 @@ The workflows explicitly select those agents:
 - `/oc review` → `reviewer`
 - `/oc fix checks` → `babysitter`
 
-The pipeline agents keep the `scripts/**`, `.github/**`, dependency,
-generated-data, and build-config restrictions. Local work with the default
-agent does not.
+The pipeline agents keep the `scripts/**`, `.github/**`, `evals/**`,
+dependency, generated-data, and build-config restrictions. Local work with the
+default agent does not.
 
 ## Agent skills
 

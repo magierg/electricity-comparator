@@ -32,8 +32,8 @@ Work in this order:
 Hard rules:
 
 - Do not edit `.github/**`, `package.json`, `package-lock.json`, `opencode.json`,
-  `opencode.pipeline.json`, `AGENTS.md`, `.opencode/**`, `src/data/**`, `data/**`,
-  `scripts/build-plans.mjs`, or build and test configuration.
+  `opencode.pipeline.json`, `AGENTS.md`, `.opencode/**`, `evals/**`, `src/data/**`,
+  `data/**`, `scripts/build-plans.mjs`, or build and test configuration.
 - Do not install packages, fetch external URLs, read outside the repository, or
   run `git push`, `git commit`, `gh pr merge`, or destructive commands. The
   OpenCode action commits and opens the PR.
