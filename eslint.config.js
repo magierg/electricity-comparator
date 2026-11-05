@@ -39,6 +39,16 @@ export default tseslint.config([
     },
   },
   {
+    files: ['public/agent-sdlc/**/*.js'],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: {
+        ...globals.browser,
+      },
+    },
+  },
+  {
     files: ['scripts/**/*.mjs'],
     extends: [js.configs.recommended],
     languageOptions: {
