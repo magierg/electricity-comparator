@@ -4,6 +4,11 @@ This repository uses OpenCode in GitHub Actions for issue implementation, PR
 review, PR repair, and bounded exploratory testing. Jev classifies pull-request
 risk. Low-risk changes can be auto-merged after the phase 1 human approval.
 
+> Prefer a visual? Open the
+> [Agentic SDLC guide](https://magierg.github.io/electricity-comparator/). It
+> maps the checkpoints, agent permissions, labels, and auto-merge rules, with a
+> live policy simulator.
+
 ## Prerequisites
 
 1. Install the [OpenCode GitHub App](https://github.com/apps/opencode-agent) on

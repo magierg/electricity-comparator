@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agentic SDLC · electricity-comparator</title>
+    <meta
+      name="description"
+      content="An interactive map of how issues become shipped code with OpenCode agents, CI, Jev risk classification, exploratory testing, and human approval."
+    />
+    <meta property="og:title" content="Agentic SDLC · electricity-comparator" />
+    <meta
+      property="og:description"
+      content="Bounded agents, hard evidence, and a human at the merge gate. Explore the workflow and test a pull request against the current policy."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0b1118" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <script>
+      try {
+        var storedTheme = localStorage.getItem('agent-sdlc-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = storedTheme || (prefersDark ? 'dark' : 'light');
+      } catch (error) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#top" aria-label="Agentic SDLC home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><use href="#icon-git-branch"></use></svg>
+          </span>
+          <span class="brand-text">
+            <strong>electricity-comparator</strong>
+            <span>Agentic SDLC</span>
+          </span>
+        </a>
+
+        <nav class="nav" aria-label="Page sections">
+          <a href="#principles">Principles</a>
+          <a href="#flow">Flow</a>
+          <a href="#simulator">Merge lab</a>
+          <a href="#agents">Agents</a>
+          <a href="#boundaries">Boundaries</a>
+          <a href="#notes">Field notes</a>
+        </nav>
+
+        <div class="header-actions">
+          <a
+            class="icon-link"
+            href="https://github.com/magierg/electricity-comparator"
+            aria-label="Open the repository on GitHub"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-github"></use></svg>
+          </a>
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            type="button"
+            aria-label="Switch to dark theme"
+            aria-pressed="false"
+          >
+            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#icon-sun"></use>
+            </svg>
+            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#icon-moon"></use>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <noscript>
+        <div class="shell">
+          <p class="noscript-note">
+            The interactive pipeline and merge simulator need JavaScript. You can still read the
+            <a href="https://github.com/magierg/electricity-comparator/blob/main/docs/agent-workflow.md">agent runbook</a>.
+          </p>
+        </div>
+      </noscript>
+
+      <section class="hero" id="top">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="shell hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow eyebrow-light"><span class="signal-dot"></span>GitHub-native delivery system</p>
+            <h1>Agents do the work.<br /><span class="accent">Humans set the bar.</span></h1>
+            <p class="hero-lede">
+              A bounded, evidence-first software lifecycle for a money-critical React app.
+              OpenCode agents plan and implement. CI, the Jev risk classifier, and an exploratory
+              agent gather proof. A human owns the merge.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#flow">
+                Explore the flow
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+              </a>
+              <a
+                class="button button-ghost"
+                href="https://github.com/magierg/electricity-comparator/blob/main/docs/agent-workflow.md"
+              >
+                Read the runbook
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-external"></use></svg>
+              </a>
+            </div>
+
+            <dl class="hero-stats">
+              <div>
+                <dt>Pipeline agents</dt>
+                <dd>5</dd>
+              </div>
+              <div>
+                <dt>Slash commands</dt>
+                <dd>4</dd>
+              </div>
+              <div>
+                <dt>Checkpoints</dt>
+                <dd>8</dd>
+              </div>
+              <div>
+                <dt>Phase</dt>
+                <dd>1<span>approval required</span></dd>
+              </div>
+            </dl>
+          </div>
+
+          <aside class="hero-card" aria-label="Current policy snapshot">
+            <div class="hero-card-head">
+              <span class="pulse-dot" aria-hidden="true"></span>
+              Current policy
+            </div>
+            <ul class="policy-list">
+              <li>
+                <span class="policy-icon policy-pass" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-check"></use></svg>
+                </span>
+                <span>Low-risk docs and test changes can auto-merge.</span>
+              </li>
+              <li>
+                <span class="policy-icon policy-warn" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-alert"></use></svg>
+                </span>
+                <span>UI and sensitive paths need a human merge.</span>
+              </li>
+              <li>
+                <span class="policy-icon policy-lock" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-lock"></use></svg>
+                </span>
+                <span>Agents cannot edit workflows, dependencies, generated data, or scripts.</span>
+              </li>
+            </ul>
+            <a class="hero-card-link" href="#simulator">
+              Test a pull request
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+            </a>
+            <div class="hero-command-strip" aria-label="Available commands">
+              <code>/oc plan</code>
+              <code>/oc implement</code>
+              <code>/oc review</code>
+              <code>/oc fix checks</code>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="principles">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow">Design goals</p>
+            <h2>Small changes. Hard evidence. Human judgment.</h2>
+            <p>
+              The pipeline is shaped around one constraint: a wrong cost calculation is worse
+              than a slow merge. Every gate exists to make the risky path visible before it ships.
+            </p>
+          </div>
+
+          <div class="principles-grid">
+            <article class="principle-card">
+              <span class="principle-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-lock"></use></svg>
+              </span>
+              <h3>Bounded by default</h3>
+              <p>
+                Agents get a narrow permission list, a step cap, and no path to workflows,
+                dependencies, generated data, or scripts.
+              </p>
+            </article>
+            <article class="principle-card">
+              <span class="principle-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-radar"></use></svg>
+              </span>
+              <h3>Evidence before merge</h3>
+              <p>
+                CI, a Jev risk assessment, and an exploratory agent produce labels and statuses
+                that a reviewer can inspect.
+              </p>
+            </article>
+            <article class="principle-card">
+              <span class="principle-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-user-check"></use></svg>
+              </span>
+              <h3>Human at the gate</h3>
+              <p>
+                Phase 1 requires an approval. Auto-merge is limited to docs-only and tests-only
+                changes; everything else is a deliberate merge.
+              </p>
+            </article>
+            <article class="principle-card">
+              <span class="principle-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-rewind"></use></svg>
+              </span>
+              <h3>Reversible by design</h3>
+              <p>
+                Small squash-merged pull requests, deleted branches, and a risk correction label
+                make it cheap to undo a bad call.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-flow" id="flow">
+        <div class="shell">
+          <div class="section-head section-head-wide">
+            <div>
+              <p class="eyebrow">The flow</p>
+              <h2>One change, eight checkpoints</h2>
+            </div>
+            <p class="section-note">
+              Select a step to inspect its trigger, contract, labels, and failure path.
+              Keyboard users can move with the arrow keys.
+            </p>
+          </div>
+
+          <div class="flow-frame">
+            <div class="flow-meta">
+              <div class="lane-key">
+                <span class="lane-swatch lane-issue"></span>
+                Issue lane
+                <span class="lane-range">01–03</span>
+              </div>
+              <div class="lane-key">
+                <span class="lane-swatch lane-pr"></span>
+                Pull request lane
+                <span class="lane-range">04–08</span>
+              </div>
+              <span class="flow-hint">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-pointer"></use></svg>
+                Click a checkpoint
+              </span>
+            </div>
+
+            <div class="pipeline" id="pipeline" role="tablist" aria-label="Agentic SDLC checkpoints"></div>
+            <div
+              class="stage-detail"
+              id="stage-detail"
+              role="tabpanel"
+              tabindex="0"
+              aria-label="Checkpoint details"
+            ></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="simulator">
+        <div class="shell">
+          <div class="section-head section-head-wide">
+            <div>
+              <p class="eyebrow">Merge lab</p>
+              <h2>Will it auto-merge?</h2>
+            </div>
+            <p class="section-note">
+              Change the inputs to see the current policy think. This is a model of the
+              workflows, not a live GitHub check.
+            </p>
+          </div>
+
+          <div class="preset-row" aria-label="Example scenarios">
+            <span class="preset-label">Try a scenario</span>
+            <button class="preset-button" type="button" data-preset="docs">Docs typo</button>
+            <button class="preset-button" type="button" data-preset="ui">UI polish</button>
+            <button class="preset-button" type="button" data-preset="money">Calculator change</button>
+          </div>
+
+          <div class="simulator" id="merge-simulator">
+            <form class="sim-controls" id="sim-form">
+              <fieldset class="control-group">
+                <legend>What changed?</legend>
+                <div class="choice-grid choice-grid-2">
+                  <label class="choice">
+                    <input type="radio" name="change" value="docs" checked />
+                    <span class="choice-title">Docs only</span>
+                    <small>README, docs, comments</small>
+                  </label>
+                  <label class="choice">
+                    <input type="radio" name="change" value="tests" />
+                    <span class="choice-title">Tests only</span>
+                    <small>Tests, e2e, test config</small>
+                  </label>
+                  <label class="choice">
+                    <input type="radio" name="change" value="ui" />
+                    <span class="choice-title">UI or behavior</span>
+                    <small>src/**, public/**, copy, styles</small>
+                  </label>
+                  <label class="choice">
+                    <input type="radio" name="change" value="sensitive" />
+                    <span class="choice-title">Sensitive path</span>
+                    <small>workflow, deps, data, scripts, config</small>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="control-group">
+                <legend>Jev risk verdict</legend>
+                <div class="choice-grid choice-grid-4">
+                  <label class="choice choice-compact">
+                    <input type="radio" name="risk" value="low" checked />
+                    <span class="choice-title">Low</span>
+                  </label>
+                  <label class="choice choice-compact">
+                    <input type="radio" name="risk" value="medium" />
+                    <span class="choice-title">Medium</span>
+                  </label>
+                  <label class="choice choice-compact">
+                    <input type="radio" name="risk" value="high" />
+                    <span class="choice-title">High</span>
+                  </label>
+                  <label class="choice choice-compact">
+                    <input type="radio" name="risk" value="unknown" />
+                    <span class="choice-title">Unknown</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="control-group" id="explore-group">
+                <legend>Exploratory result</legend>
+                <div class="choice-grid choice-grid-5">
+                  <label class="choice choice-compact">
+                    <input type="radio" name="explore" value="passed" checked />
+                    <span class="choice-title">Passed</span>
+                  </label>
+                  <label class="choice choice-compact">
+                    <input type="radio" name="explore" value="findings" />
+                    <span class="choice-title">Findings</span>
+                  </label>
+                  <label class="choice choice-compact">
+                    <input type="radio" name="explore" value="blocked" />
+                    <span class="choice-title">Blocked</span>
+                  </label>
+                  <label class="choice choice-compact">
+                    <input type="radio" name="explore" value="accepted" />
+                    <span class="choice-title">Accepted</span>
+                  </label>
+                  <label class="choice choice-compact">
+                    <input type="radio" name="explore" value="not-run" />
+                    <span class="choice-title">Not run</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="control-split">
+                <fieldset class="control-group">
+                  <legend>Merge phase</legend>
+                  <div class="choice-grid choice-grid-2">
+                    <label class="choice choice-compact">
+                      <input type="radio" name="phase" value="1" checked />
+                      <span class="choice-title">Phase 1</span>
+                    </label>
+                    <label class="choice choice-compact">
+                      <input type="radio" name="phase" value="2" />
+                      <span class="choice-title">Phase 2</span>
+                    </label>
+                  </div>
+                </fieldset>
+
+                <fieldset class="control-group" id="approval-group">
+                  <legend>Human approval</legend>
+                  <div class="choice-grid choice-grid-2">
+                    <label class="choice choice-compact">
+                      <input type="radio" name="approval" value="approved" checked />
+                      <span class="choice-title">Approved</span>
+                    </label>
+                    <label class="choice choice-compact">
+                      <input type="radio" name="approval" value="waiting" />
+                      <span class="choice-title">Waiting</span>
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+
+              <fieldset class="control-group control-group-checks">
+                <legend>Extra labels</legend>
+                <label class="check-row">
+                  <input type="checkbox" name="override" value="accepted" />
+                  <span>
+                    <strong>risk:accepted</strong>
+                    <small>Overrides the risk status only. Never enables auto-merge.</small>
+                  </span>
+                </label>
+                <label class="check-row">
+                  <input type="checkbox" name="block" value="do-not-merge" />
+                  <span>
+                    <strong>do-not-merge</strong>
+                    <small>Stops the auto-merge gate regardless of other labels.</small>
+                  </span>
+                </label>
+              </fieldset>
+            </form>
+
+            <aside class="sim-outcome" aria-live="polite" aria-atomic="true">
+              <div class="outcome-head">
+                <span class="outcome-kicker">Predicted outcome</span>
+                <span class="outcome-badge" id="sim-badge">Auto</span>
+              </div>
+              <h3 id="sim-title">Auto-merge enabled</h3>
+              <p class="outcome-summary" id="sim-summary"></p>
+
+              <ul class="gate-list" id="sim-gates"></ul>
+
+              <div class="outcome-labels">
+                <span class="outcome-label-title">Labels on the PR</span>
+                <div class="chip-row chip-row-dark" id="sim-labels"></div>
+              </div>
+
+              <p class="assumption">
+                Assumes CI passes, the PR is in this repository, is not a draft, and the diff is
+                under the classifier limit. Risk status is modeled in enforced mode. Change labels
+                are representative for the selected category.
+              </p>
+
+              <button class="outcome-reset" id="sim-reset" type="button">
+                Reset scenario
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rewind"></use></svg>
+              </button>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="agents">
+        <div class="shell">
+          <div class="section-head section-head-wide">
+            <div>
+              <p class="eyebrow">The cast</p>
+              <h2>Five pipeline agents, four commands</h2>
+            </div>
+            <p class="section-note">
+              Every pipeline agent uses <code>opencode-go/deepseek-v4.1-flash</code> and a separate
+              prompt. Write access is the exception, not the default.
+            </p>
+          </div>
+
+          <div class="agent-grid">
+            <article class="agent-card" data-agent="planner">
+              <div class="agent-top">
+                <span class="agent-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-map"></use></svg>
+                </span>
+                <span class="agent-mode agent-mode-read">Read-only</span>
+              </div>
+              <h3>Planner</h3>
+              <p>Maps the issue into an implementation and test plan before anyone edits code.</p>
+              <dl class="agent-stats">
+                <div><dt>Step cap</dt><dd class="steps-value">25 steps</dd></div>
+                <div><dt>Trigger</dt><dd><code>/oc plan</code></dd></div>
+              </dl>
+            </article>
+
+            <article class="agent-card" data-agent="implementer">
+              <div class="agent-top">
+                <span class="agent-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-code"></use></svg>
+                </span>
+                <span class="agent-mode agent-mode-write">Can edit</span>
+              </div>
+              <h3>Implementer</h3>
+              <p>Writes the change and tests, runs the checks, and opens a pull request.</p>
+              <dl class="agent-stats">
+                <div><dt>Step cap</dt><dd class="steps-value">60 steps</dd></div>
+                <div><dt>Trigger</dt><dd><code>/oc implement</code></dd></div>
+              </dl>
+            </article>
+
+            <article class="agent-card" data-agent="reviewer">
+              <div class="agent-top">
+                <span class="agent-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-eye"></use></svg>
+                </span>
+                <span class="agent-mode agent-mode-read">Read-only</span>
+              </div>
+              <h3>Reviewer</h3>
+              <p>Reads the diff, runs the checks, and posts findings without changing files.</p>
+              <dl class="agent-stats">
+                <div><dt>Step cap</dt><dd class="steps-value">25 steps</dd></div>
+                <div><dt>Trigger</dt><dd><code>/oc review</code></dd></div>
+              </dl>
+            </article>
+
+            <article class="agent-card" data-agent="babysitter">
+              <div class="agent-top">
+                <span class="agent-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-wrench"></use></svg>
+                </span>
+                <span class="agent-mode agent-mode-write">Can edit</span>
+              </div>
+              <h3>Babysitter</h3>
+              <p>Diagnoses red CI, pushes a focused fix, and re-runs the failing checks.</p>
+              <dl class="agent-stats">
+                <div><dt>Step cap</dt><dd class="steps-value">40 steps</dd></div>
+                <div><dt>Trigger</dt><dd><code>/oc fix checks</code></dd></div>
+              </dl>
+            </article>
+
+            <article class="agent-card agent-card-muted" data-agent="triage">
+              <div class="agent-top">
+                <span class="agent-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-search"></use></svg>
+                </span>
+                <span class="agent-mode agent-mode-read">Read-only</span>
+              </div>
+              <h3>Triage</h3>
+              <p>Explains an issue and finds the relevant code. Configured, but not wired to a slash command.</p>
+              <dl class="agent-stats">
+                <div><dt>Step cap</dt><dd class="steps-value">15 steps</dd></div>
+                <div><dt>Trigger</dt><dd>Configured agent</dd></div>
+              </dl>
+            </article>
+          </div>
+
+          <div class="command-panel">
+            <div class="command-panel-head">
+              <div>
+                <h3>Command cheat sheet</h3>
+                <p>Commands are limited to repository owners, members, and collaborators.</p>
+              </div>
+              <span class="mini-badge">PR commands need environment approval</span>
+            </div>
+            <div class="table-wrap">
+              <table class="command-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Command</th>
+                    <th scope="col">Where</th>
+                    <th scope="col">Agent</th>
+                    <th scope="col">Effect</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code class="command-code">/oc plan</code></td>
+                    <td>Issue</td>
+                    <td>Planner</td>
+                    <td>Posts a read-only implementation and test plan.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="command-code">/oc implement</code></td>
+                    <td>Issue</td>
+                    <td>Implementer</td>
+                    <td>Opens an agent branch and a pull request.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="command-code">/oc review</code></td>
+                    <td>Pull request</td>
+                    <td>Reviewer</td>
+                    <td>Posts read-only review findings.</td>
+                  </tr>
+                  <tr>
+                    <td><code class="command-code">/oc fix checks</code></td>
+                    <td>Pull request</td>
+                    <td>Babysitter</td>
+                    <td>Diagnoses and pushes a fix for failing checks.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="command-note">
+              PR commands refuse forks, stale commands, and pull requests that changed agent
+              configuration. The implementer refuses a second open agent PR for the same issue.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="boundaries">
+        <div class="shell">
+          <div class="section-head section-head-wide">
+            <div>
+              <p class="eyebrow">Boundaries</p>
+              <h2>What agents can touch</h2>
+            </div>
+            <p class="section-note">
+              The edit list is a hard boundary. The risk classifier is a second boundary:
+              allowed edits to money logic still cannot auto-merge.
+            </p>
+          </div>
+
+          <div class="table-wrap matrix-wrap">
+            <table class="permission-table">
+              <caption class="sr-only">
+                Pipeline agent permissions by repository surface
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Surface</th>
+                  <th scope="col">Planner</th>
+                  <th scope="col">Implementer</th>
+                  <th scope="col">Reviewer</th>
+                  <th scope="col">Babysitter</th>
+                  <th scope="col">Triage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">App UI and logic<br /><code>src/**</code> except data</th>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-edit">Edit</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-edit">Edit</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Money and sensitive logic<br /><code>calculator</code>, <code>plans</code>, <code>usage</code>, <code>parseMeterCsv</code>, constants, types</th>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-sensitive">Edit*</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-sensitive">Edit*</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Tests<br />unit, e2e, fixtures</th>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-edit">Edit</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-edit">Edit</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Generated data<br /><code>src/data/**</code>, <code>data/**</code></th>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Workflows and scripts<br /><code>.github/**</code>, <code>scripts/**</code></th>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Dependencies<br /><code>package*.json</code></th>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Agent config<br /><code>AGENTS.md</code>, <code>opencode*.json</code>, <code>.opencode/**</code></th>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Build and test config<br /><code>vite</code>, <code>playwright</code>, <code>jest</code>, <code>tsconfig</code>, <code>eslint</code></th>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-read">Read</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">External dirs, web, delegation<br />outside the workspace</th>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                  <td><span class="cell cell-deny">Deny</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Bash<br />arbitrary shell access</th>
+                  <td><span class="cell cell-read">Read-only</span></td>
+                  <td><span class="cell cell-sensitive">Allowlist</span></td>
+                  <td><span class="cell cell-read">Read + checks</span></td>
+                  <td><span class="cell cell-sensitive">Allowlist</span></td>
+                  <td><span class="cell cell-read">Read-only</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="matrix-note">
+            <strong>Edit*</strong> is the important nuance: an implementer or babysitter can edit
+            calculation logic, but the risk workflow classifies it as sensitive. It can never
+            auto-merge and needs human review.
+          </p>
+
+          <div class="guardrail-grid">
+            <article class="guardrail-card">
+              <span class="guardrail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-shield"></use></svg>
+              </span>
+              <h3>Trusted base</h3>
+              <p>
+                Risk classification runs on <code>pull_request_target</code> from the base branch
+                and never checks out or executes PR code.
+              </p>
+            </article>
+            <article class="guardrail-card">
+              <span class="guardrail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-key"></use></svg>
+              </span>
+              <h3>Environment gate</h3>
+              <p>
+                PR command jobs run in the <code>opencode-pr</code> environment. A required
+                reviewer releases the API key and PR code.
+              </p>
+            </article>
+            <article class="guardrail-card">
+              <span class="guardrail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-git-branch"></use></svg>
+              </span>
+              <h3>Config drift guard</h3>
+              <p>
+                If a PR changes <code>opencode*.json</code>, <code>AGENTS.md</code>, or
+                <code>.opencode/**</code>, PR commands refuse and ask for a manual run.
+              </p>
+            </article>
+            <article class="guardrail-card">
+              <span class="guardrail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-clock"></use></svg>
+              </span>
+              <h3>Stale command guard</h3>
+              <p>
+                A command posted before the latest push is rejected. Re-post it after the new
+                head is available.
+              </p>
+            </article>
+            <article class="guardrail-card">
+              <span class="guardrail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-fork"></use></svg>
+              </span>
+              <h3>Fork boundary</h3>
+              <p>
+                Fork PRs skip agent and exploratory jobs because repository secrets are not
+                available to them. They need manual review.
+              </p>
+            </article>
+            <article class="guardrail-card">
+              <span class="guardrail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><use href="#icon-gauge"></use></svg>
+              </span>
+              <h3>Cost caps</h3>
+              <p>
+                Step limits, job timeouts, concurrency groups, and an eight-step exploration
+                budget keep agent runs bounded.
+              </p>
+            </article>
+          </div>
+
+          <div class="label-panel">
+            <div class="label-panel-head">
+              <h3>Label decoder</h3>
+              <p>The labels are the interface between workflows, humans, and auto-merge.</p>
+            </div>
+            <div class="label-groups">
+              <div class="label-group">
+                <h4>Issue</h4>
+                <div class="chip-row">
+                  <span class="chip chip-agent">agent:ready</span>
+                  <span class="chip chip-agent">agent:in-progress</span>
+                  <span class="chip chip-agent">agent:pr</span>
+                  <span class="chip chip-agent">agent:blocked</span>
+                </div>
+              </div>
+              <div class="label-group">
+                <h4>Risk</h4>
+                <div class="chip-row">
+                  <span class="chip chip-pass">risk:low</span>
+                  <span class="chip chip-warn">risk:medium</span>
+                  <span class="chip chip-fail">risk:high</span>
+                  <span class="chip chip-muted">risk:unknown</span>
+                  <span class="chip chip-override">risk:accepted</span>
+                  <span class="chip chip-fail">risk:false-low</span>
+                </div>
+              </div>
+              <div class="label-group">
+                <h4>Change</h4>
+                <div class="chip-row">
+                  <span class="chip chip-muted">change:docs</span>
+                  <span class="chip chip-muted">change:tests</span>
+                  <span class="chip chip-muted">change:ui</span>
+                  <span class="chip chip-muted">change:calculation</span>
+                  <span class="chip chip-muted">change:logic</span>
+                  <span class="chip chip-muted">change:data</span>
+                  <span class="chip chip-muted">change:deps</span>
+                  <span class="chip chip-muted">change:ci</span>
+                  <span class="chip chip-muted">change:security</span>
+                  <span class="chip chip-muted">change:unknown</span>
+                </div>
+              </div>
+              <div class="label-group">
+                <h4>Merge</h4>
+                <div class="chip-row">
+                  <span class="chip chip-pass">automerge:eligible</span>
+                  <span class="chip chip-muted">automerge:blocked</span>
+                  <span class="chip chip-fail">do-not-merge</span>
+                </div>
+              </div>
+              <div class="label-group">
+                <h4>Exploratory</h4>
+                <div class="chip-row">
+                  <span class="chip chip-muted">exploratory:run</span>
+                  <span class="chip chip-pass">exploratory:passed</span>
+                  <span class="chip chip-warn">exploratory:findings</span>
+                  <span class="chip chip-fail">exploratory:blocked</span>
+                  <span class="chip chip-override">exploratory:accepted</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="notes">
+        <div class="shell">
+          <div class="section-head section-head-wide">
+            <div>
+              <p class="eyebrow">Field notes</p>
+              <h2>When a gate says no</h2>
+            </div>
+            <p class="section-note">
+              The short version of the runbook. Use the authenticated <code>gh</code> CLI for
+              CI debugging; the browser is not the source of truth.
+            </p>
+          </div>
+
+          <div class="notes-list">
+            <details class="note">
+              <summary>Why didn’t auto-merge enable?</summary>
+              <div class="note-body">
+                <p>Auto-merge needs all of these at the same time:</p>
+                <ul>
+                  <li>The PR is not a draft and has no <code>do-not-merge</code> label.</li>
+                  <li><code>risk:low</code> and <code>automerge:eligible</code> are both present.</li>
+                  <li>The change is docs-only or tests-only on a non-sensitive path.</li>
+                  <li>The diff was not truncated by the classifier limit.</li>
+                  <li>For UI changes, <code>exploratory:passed</code> or <code>exploratory:accepted</code> is present.</li>
+                  <li>Phase 1 has an approving review, unless <code>AUTOMERGE_REQUIRE_APPROVAL=false</code>.</li>
+                </ul>
+                <p>
+                  UI changes are not auto-merge eligible in the current policy, even after a
+                  passing exploratory run. <code>risk:accepted</code> overrides the risk status
+                  only; it does not enable auto-merge.
+                </p>
+              </div>
+            </details>
+
+            <details class="note">
+              <summary>Why is risk unknown?</summary>
+              <div class="note-body">
+                <p>
+                  Jev could not produce a usable result. Missing or invalid
+                  <code>OPENCODE_API_KEY</code>, model unavailability, and timeouts produce
+                  <code>risk:unknown</code>. Check the <strong>PR Risk</strong> workflow, the
+                  uploaded <code>risk-result.json</code>, and the PR comment. A diff over the
+                  classifier limit can still get a risk label, but it is never auto-merge
+                  eligible. Auto-merge stays blocked until the risk is resolved.
+                </p>
+              </div>
+            </details>
+
+            <details class="note">
+              <summary>Why didn’t exploratory testing run?</summary>
+              <div class="note-body">
+                <p>
+                  It runs on PR open, reopen, or ready-for-review, and when the
+                  <code>exploratory:run</code> label is added. It does not run on every push.
+                  Tests-only changes and fork PRs are skipped. To re-run after new commits, add
+                  <code>exploratory:run</code>; the workflow removes it after the run.
+                </p>
+              </div>
+            </details>
+
+            <details class="note">
+              <summary>Why did a PR command refuse?</summary>
+              <div class="note-body">
+                <p>Common reasons:</p>
+                <ul>
+                  <li>The PR comes from a fork.</li>
+                  <li>The comment predates the latest push.</li>
+                  <li>The PR changed agent configuration.</li>
+                  <li>The <code>opencode-pr</code> environment approval was not granted.</li>
+                  <li>The command was posted by someone outside the owner/member/collaborator set.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="note">
+              <summary>How do I override a gate?</summary>
+              <div class="note-body">
+                <p>
+                  <code>risk:accepted</code> lets a maintainer merge manually after reviewing the
+                  risk; it never enables auto-merge. <code>exploratory:accepted</code> should be
+                  added only after reading the exploratory report artifact.
+                  <code>do-not-merge</code> stops auto-merge immediately. Phase 2 can be enabled
+                  by setting <code>AUTOMERGE_REQUIRE_APPROVAL=false</code> after calibration.
+                </p>
+              </div>
+            </details>
+
+            <details class="note">
+              <summary>Where should I debug a red check?</summary>
+              <div class="note-body">
+                <p>Use the authenticated GitHub CLI:</p>
+                <pre><code>gh pr checks &lt;pr-number&gt;
+gh run list --limit 20
+gh run view &lt;run-id&gt; --log-failed
+gh run download &lt;run-id&gt; -n &lt;artifact-name&gt; -D /tmp/ci-artifacts</code></pre>
+                <p>
+                  The runbook has the full triage path and the weekly calibration report.
+                </p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <div class="footer-brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><use href="#icon-git-branch"></use></svg>
+          </span>
+          <div>
+            <strong>Agentic SDLC</strong>
+            <p>
+              Describes the policies in <code>main</code>. Repository variables can change the
+              gates; the workflows and runbook are the source of truth.
+            </p>
+          </div>
+        </div>
+        <nav class="footer-nav" aria-label="Source links">
+          <a href="https://github.com/magierg/electricity-comparator/blob/main/docs/agent-workflow.md">Runbook</a>
+          <a href="https://github.com/magierg/electricity-comparator/blob/main/opencode.pipeline.json">Pipeline config</a>
+          <a href="https://github.com/magierg/electricity-comparator/tree/main/.github/workflows">Workflows</a>
+          <a href="https://github.com/magierg/electricity-comparator/tree/main/public/agent-sdlc">Page source</a>
+          <a href="https://electricity-comparator-delta.vercel.app">Open the app</a>
+        </nav>
+        <p class="footer-meta">
+          Static page. No analytics, no external dependencies.
+          <a href="https://github.com/magierg/electricity-comparator/edit/main/public/agent-sdlc/index.html">Edit this page</a>
+        </p>
+      </div>
+    </footer>
+
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </symbol>
+      <symbol id="icon-external" viewBox="0 0 24 24">
+        <path d="M14 4h6v6M20 4l-9 9" />
+        <path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="M5 12.5 9.5 17 19 7.5" />
+      </symbol>
+      <symbol id="icon-x" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="icon-alert" viewBox="0 0 24 24">
+        <path d="M12 4 3 20h18L12 4Z" />
+        <path d="M12 9v5M12 17h.01" />
+      </symbol>
+      <symbol id="icon-lock" viewBox="0 0 24 24">
+        <rect x="4" y="10" width="16" height="10" rx="2" />
+        <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+      </symbol>
+      <symbol id="icon-radar" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 12 18 6M12 2v2M22 12h-2M12 22v-2M2 12h2" />
+      </symbol>
+      <symbol id="icon-user-check" viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3.5" />
+        <path d="M3 20a6 6 0 0 1 11.2-3" />
+        <path d="m15.5 18 2 2 4-4" />
+      </symbol>
+      <symbol id="icon-rewind" viewBox="0 0 24 24">
+        <path d="M4 10a8 8 0 1 1 2.3 7.1" />
+        <path d="M4 4v6h6" />
+      </symbol>
+      <symbol id="icon-pointer" viewBox="0 0 24 24">
+        <path d="m5 3 14 9-6 1.5L10 21 5 3Z" />
+      </symbol>
+      <symbol id="icon-inbox" viewBox="0 0 24 24">
+        <path d="M4 5h16v14H4z" />
+        <path d="M4 14h5l2 2h2l2-2h5" />
+      </symbol>
+      <symbol id="icon-map" viewBox="0 0 24 24">
+        <path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Z" />
+        <path d="M9 4v14M15 6v14" />
+      </symbol>
+      <symbol id="icon-code" viewBox="0 0 24 24">
+        <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" />
+      </symbol>
+      <symbol id="icon-eye" viewBox="0 0 24 24">
+        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" />
+        <circle cx="12" cy="12" r="2.5" />
+      </symbol>
+      <symbol id="icon-wrench" viewBox="0 0 24 24">
+        <path d="M14 6a5 5 0 0 0-6.5 6.5L3 17l4 4 4.5-4.5A5 5 0 0 0 18 10l-3 3-4-4 3-3Z" />
+      </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="6" />
+        <path d="m16 16 4 4" />
+      </symbol>
+      <symbol id="icon-shield" viewBox="0 0 24 24">
+        <path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z" />
+        <path d="m8.5 12 2.5 2.5 4.5-5" />
+      </symbol>
+      <symbol id="icon-key" viewBox="0 0 24 24">
+        <circle cx="8" cy="15" r="4" />
+        <path d="m11 12 9-9M17 6l2 2M14 9l2 2" />
+      </symbol>
+      <symbol id="icon-git-branch" viewBox="0 0 24 24">
+        <circle cx="6" cy="6" r="2" />
+        <circle cx="18" cy="6" r="2" />
+        <circle cx="6" cy="18" r="2" />
+        <path d="M6 8v8M8 6h8a2 2 0 0 1 2 2v3" />
+      </symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v4l3 2" />
+      </symbol>
+      <symbol id="icon-fork" viewBox="0 0 24 24">
+        <circle cx="7" cy="5" r="2" />
+        <circle cx="17" cy="5" r="2" />
+        <circle cx="12" cy="19" r="2" />
+        <path d="M7 7v3a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3V7M12 13v4" />
+      </symbol>
+      <symbol id="icon-gauge" viewBox="0 0 24 24">
+        <path d="M4 18a8 8 0 1 1 16 0" />
+        <path d="m12 14 4-4M6 18h12" />
+      </symbol>
+      <symbol id="icon-github" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          stroke="none"
+          d="M9 19c-4 1.5-4-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"
+        />
+      </symbol>
+      <symbol id="icon-copy" viewBox="0 0 24 24">
+        <rect x="8" y="8" width="12" height="12" rx="2" />
+        <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+      </symbol>
+      <symbol id="icon-minus" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+      </symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+      </symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />
+      </symbol>
+    </svg>
+  </body>
+</html>

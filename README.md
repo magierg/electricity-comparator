@@ -92,7 +92,10 @@ scripts/
 ├── risk-report.mjs      # Weekly Jev calibration report
 └── setup-labels.sh      # Label bootstrap
 e2e/
-└── main-flow.spec.ts    # Playwright tests
+├── main-flow.spec.ts    # Playwright tests
+└── agent-sdlc.spec.ts   # Guide interaction tests
+public/
+└── agent-sdlc/          # Interactive agentic SDLC guide
 .github/workflows/       # CI and agent workflows
 .opencode/               # Pipeline agent prompts and skills
 opencode.pipeline.json   # Restricted pipeline-only agent config
@@ -115,6 +118,12 @@ Actions:
 Pull requests are checked by CI, classified by Jev, and explored with `e2e` when
 UI behavior changes. Phase 1 auto-merge requires a human approval and only
 applies to low-risk docs-only or tests-only changes.
+
+For an interactive map of the pipeline and a merge-policy simulator, see the
+[Agentic SDLC guide](https://magierg.github.io/electricity-comparator/). The
+guide is a static page in `public/agent-sdlc/`; enable GitHub Pages with the
+GitHub Actions source once, then `.github/workflows/pages.yml` deploys it when
+that folder changes on `main`.
 
 See [docs/agent-workflow.md](docs/agent-workflow.md) for setup, labels,
 risk calibration, and the override flow.
