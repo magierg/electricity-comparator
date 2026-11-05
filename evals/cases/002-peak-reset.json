@@ -1,0 +1,71 @@
+{
+  "name": "002-peak-reset",
+  "source": "Issue #23",
+  "suite": "full",
+  "from": "d9198e5f52930d7855892e0e81ed46cec5454737",
+  "prompt": "## Goal\n\nAdd a visible **Reset** control to the Peak windows card so a user can restore the default three-tier schedule after choosing a preset or customising hours.\n\n## Context\n\n`PeakScheduleSettings` offers preset buttons and custom hour toggles. Once the schedule changes, there is no one-click way to return to `DEFAULT_PEAK_SCHEDULE`.\n\n## Acceptance criteria\n\n- [ ] The Peak windows card has a `Reset` button with an accessible name.\n- [ ] Clicking it calls `onChange(DEFAULT_PEAK_SCHEDULE)`.\n- [ ] Disable the control when the current schedule already equals the default, or hide it; choose the simpler behavior and cover it with a test.\n- [ ] Add a focused unit test in `src/components/__tests__/PeakScheduleSettings.test.tsx` for the reset action.\n- [ ] No changes to plan data, calculation logic, workflows, or configuration.\n\n## Verification\n\n- `npm run lint:ci`\n- `npm run typecheck`\n- `npm run test:coverage`",
+  "may_change": [
+    "src/components/PeakScheduleSettings.tsx",
+    "src/components/__tests__/**"
+  ],
+  "must_not_change": [
+    ".github/**",
+    "package.json",
+    "package-lock.json",
+    "opencode.json",
+    "opencode.pipeline.json",
+    "AGENTS.md",
+    ".opencode/**",
+    "evals/**",
+    "src/data/**",
+    "data/**",
+    "scripts/**",
+    "docs/**",
+    "e2e/**",
+    "public/**",
+    "index.html",
+    "src/lib/**",
+    "src/App.tsx",
+    "src/constants.ts",
+    "vercel.json",
+    "playwright.config.ts",
+    "e2e.config.ts",
+    "jest.config.cjs",
+    "vite.config.ts",
+    "tsconfig*.json",
+    "eslint.config.js"
+  ],
+  "required_changes": [
+    "src/components/PeakScheduleSettings.tsx"
+  ],
+  "required_test_change": true,
+  "require_pr_body": true,
+  "hidden_tests": [
+    {
+      "source": "checks/peak-reset.test.tsx.hidden",
+      "dest": "src/components/__tests__/eval-peak-reset.test.tsx"
+    },
+    {
+      "source": "checks/money-invariants.test.ts.hidden",
+      "dest": "src/lib/__tests__/eval-money-invariants.test.ts"
+    }
+  ],
+  "checks": [
+    {
+      "name": "lint",
+      "run": "npm run lint:ci"
+    },
+    {
+      "name": "typecheck",
+      "run": "npm run typecheck"
+    },
+    {
+      "name": "unit tests",
+      "run": "npm test -- --runInBand"
+    },
+    {
+      "name": "build",
+      "run": "npm run build"
+    }
+  ]
+}

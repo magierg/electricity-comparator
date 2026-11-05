@@ -1,0 +1,104 @@
+name: Agent evals
+
+on:
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - 'opencode.json'
+      - 'opencode.pipeline.json'
+      - '.opencode/**'
+      - 'evals/**'
+      - '.github/workflows/agent-evals.yml'
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-evals-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  HUSKY: 0
+  GIT_TERMINAL_PROMPT: 0
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      cases: ${{ steps.list.outputs.cases }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+
+      - name: Test eval checker
+        run: node --test evals/check-diff.test.mjs
+
+      - name: List eval cases
+        id: list
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            cases=$(node evals/list-cases.mjs --suite smoke)
+          else
+            cases=$(node evals/list-cases.mjs)
+          fi
+          echo "cases=$cases" >> "$GITHUB_OUTPUT"
+
+  evals:
+    needs: setup
+    if: |
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association))
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        case: ${{ fromJSON(needs.setup.outputs.cases) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+
+      - name: Install OpenCode
+        run: npm install --global @opencode/cli@2.2.2
+
+      - name: Run eval
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          CI: true
+        run: node evals/run-eval.mjs --case "evals/cases/${{ matrix.case }}.json"
+
+      - name: Upload eval artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: eval-${{ matrix.case }}
+          path: eval-results/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Write summary
+        if: always()
+        run: cat "eval-results/${{ matrix.case }}/summary.md" >> "$GITHUB_STEP_SUMMARY" || true

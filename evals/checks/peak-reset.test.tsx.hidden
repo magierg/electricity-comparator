@@ -1,0 +1,24 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { DEFAULT_PEAK_SCHEDULE, PEAK_PRESETS } from '../../constants';
+import PeakScheduleSettings from '../PeakScheduleSettings';
+
+describe('PeakScheduleSettings reset eval', () => {
+  it('resets a custom schedule to the default', () => {
+    const onChange = jest.fn();
+    render(<PeakScheduleSettings schedule={PEAK_PRESETS.evening.schedule} onChange={onChange} />);
+
+    const reset = screen.getByRole('button', { name: /reset/i });
+    expect(reset).toBeEnabled();
+
+    fireEvent.click(reset);
+    expect(onChange).toHaveBeenCalledWith(DEFAULT_PEAK_SCHEDULE);
+  });
+
+  it('disables or hides reset when the schedule is already default', () => {
+    const onChange = jest.fn();
+    render(<PeakScheduleSettings schedule={DEFAULT_PEAK_SCHEDULE} onChange={onChange} />);
+
+    const reset = screen.queryByRole('button', { name: /reset/i });
+    if (reset) expect(reset).toBeDisabled();
+  });
+});
