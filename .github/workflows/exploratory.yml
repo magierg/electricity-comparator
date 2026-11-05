@@ -99,7 +99,7 @@ jobs:
             fi
             sleep 10
           done
-          echo "No successful preview deployment found for $sha" >&2
+          echo "No successful preview deployment found for $sha after $attempt attempts" >&2
           exit 1
 
       - name: Explore the app
