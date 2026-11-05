@@ -1,0 +1,51 @@
+{
+  "name": "001-docs-exploratory-run",
+  "source": "Issue #20 / PR #21",
+  "suite": "smoke",
+  "from": "b4dfaaf0556512d5b12ade246b59a1196ca42502",
+  "prompt": "## Goal\n\nAdd a troubleshooting entry to `docs/agent-workflow.md` explaining how to re-run exploratory testing for a UI pull request.\n\n## Context\n\nExploratory testing runs when a PR is opened, reopened, or marked ready for review, and when the `exploratory:run` label is added. The troubleshooting section does not yet mention this label.\n\n## Acceptance criteria\n\n- [ ] `docs/agent-workflow.md` has a Troubleshooting bullet for re-running exploratory testing.\n- [ ] The bullet says to add `exploratory:run`; the workflow removes it after the run.\n- [ ] No code, workflow, data, or configuration files change.\n\n## Verification\n\n- `npm run lint:ci`\n- `npm run typecheck`",
+  "may_change": [
+    "docs/agent-workflow.md"
+  ],
+  "must_not_change": [
+    ".github/**",
+    "package.json",
+    "package-lock.json",
+    "opencode.json",
+    "opencode.pipeline.json",
+    "AGENTS.md",
+    ".opencode/**",
+    "evals/**",
+    "src/**",
+    "e2e/**",
+    "public/**",
+    "index.html",
+    "data/**",
+    "scripts/**",
+    "vercel.json",
+    "playwright.config.ts",
+    "e2e.config.ts",
+    "jest.config.cjs",
+    "vite.config.ts",
+    "tsconfig*.json",
+    "eslint.config.js"
+  ],
+  "required_changes": [
+    "docs/agent-workflow.md"
+  ],
+  "require_pr_body": true,
+  "checks": [
+    {
+      "name": "lint",
+      "run": "npm run lint:ci"
+    },
+    {
+      "name": "typecheck",
+      "run": "npm run typecheck"
+    },
+    {
+      "name": "troubleshooting mentions exploratory:run",
+      "run": "awk '/^## Troubleshooting/{flag=1; next} /^## /{flag=0} flag' docs/agent-workflow.md | grep -q 'exploratory:run'"
+    }
+  ]
+}

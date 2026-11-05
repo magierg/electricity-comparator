@@ -40,6 +40,8 @@ requires it. Run `npm run data:plans:check` after any data change.
 - Keep tests deterministic. Do not weaken assertions to make a change pass.
 - For UI changes, add or update a Playwright or `e2e` flow when the behavior is
   not already covered.
+- For harness changes, run the agent evals in `evals/` and add a case when the
+  change fixes a reproducible failure. See `evals/README.md`.
 
 ## Pipeline agents: forbidden without explicit human approval
 
@@ -54,6 +56,7 @@ Pipeline agents must not edit:
 - `.github/**`
 - `package.json` or `package-lock.json`
 - `opencode.json`, `opencode.pipeline.json`, `AGENTS.md`, or `.opencode/**`
+- `evals/**`
 - `src/data/**`
 - `scripts/**`
 - `data/**`
