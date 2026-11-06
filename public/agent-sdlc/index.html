@@ -47,6 +47,7 @@
           <a href="#principles">Principles</a>
           <a href="#flow">Flow</a>
           <a href="#simulator">Merge lab</a>
+          <a href="#playbook">Playbook</a>
           <a href="#agents">Agents</a>
           <a href="#boundaries">Boundaries</a>
           <a href="#notes">Field notes</a>
@@ -442,6 +443,282 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-rewind"></use></svg>
               </button>
             </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="playbook">
+        <div class="shell">
+          <div class="section-head section-head-wide">
+            <div>
+              <p class="eyebrow">Playbook</p>
+              <h2>Work the issue. Then work the checks.</h2>
+            </div>
+            <p class="section-note">
+              A practical path from an <code>agent:ready</code> issue to a green, reviewed pull
+              request. Green checks are necessary; they are not a substitute for the human gate.
+            </p>
+          </div>
+
+          <div class="playbook-grid">
+            <article class="playbook-card">
+              <div class="playbook-top">
+                <span class="playbook-number">01</span>
+                <span class="playbook-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-inbox"></use></svg>
+                </span>
+              </div>
+              <h3>Start an issue</h3>
+              <ol class="playbook-list">
+                <li>Write the problem, acceptance criteria, and constraints in the issue.</li>
+                <li>Add <code>agent:ready</code>.</li>
+                <li>Comment <code>/oc plan</code>. Review the plan and test strategy.</li>
+                <li>Comment <code>/oc implement</code>. The agent opens a PR with <code>Closes #N</code>.</li>
+              </ol>
+              <p class="playbook-note">
+                Commands are limited to owners, members, and collaborators. The implementer refuses
+                if an agent PR is already open for the issue.
+              </p>
+            </article>
+
+            <article class="playbook-card">
+              <div class="playbook-top">
+                <span class="playbook-number">02</span>
+                <span class="playbook-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-eye"></use></svg>
+                </span>
+              </div>
+              <h3>Work the PR</h3>
+              <ol class="playbook-list">
+                <li>Read the risk comment and labels before reading the diff.</li>
+                <li>Run <code>/oc review</code> for a read-only second pass.</li>
+                <li>Fix red checks locally, or use <code>/oc fix checks</code>.</li>
+                <li>Review exploratory evidence. Re-run with <code>exploratory:run</code> after new commits.</li>
+                <li>Request human review when the evidence is complete.</li>
+              </ol>
+            </article>
+
+            <article class="playbook-card">
+              <div class="playbook-top">
+                <span class="playbook-number">03</span>
+                <span class="playbook-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-shield"></use></svg>
+                </span>
+              </div>
+              <h3>Get to green</h3>
+              <ol class="playbook-list">
+                <li>Run the local preflight that matches the change.</li>
+                <li>Use <code>gh pr checks &lt;n&gt;</code> to find the first red job.</li>
+                <li>Read the failing log with <code>gh run view &lt;run-id&gt; --log-failed</code>.</li>
+                <li>Fix the root cause and push. Do not weaken a test to clear a check.</li>
+                <li>Wait for <code>ci-success</code>, get approval, then merge.</li>
+              </ol>
+              <p class="playbook-note">
+                Auto-merge is limited to low-risk docs/tests. UI and sensitive changes are
+                squash-merged manually after approval.
+              </p>
+            </article>
+          </div>
+
+          <div class="check-panel">
+            <div class="check-panel-head">
+              <div>
+                <h3>Check recovery map</h3>
+                <p>What each check proves and the first local command to run when it is red.</p>
+              </div>
+              <span class="check-required">
+                Required merge checks:
+                <code>ci-success</code> · <code>risk</code> · <code>dependency-review</code>
+              </span>
+            </div>
+            <div class="table-wrap">
+              <table class="check-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Check</th>
+                    <th scope="col">Run locally</th>
+                    <th scope="col">If it is red</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>lint</code></td>
+                    <td><code>npm run lint:ci</code><br /><code>npm run typecheck</code></td>
+                    <td>
+                      Fix the first ESLint or TypeScript error. The same job runs
+                      <code>actionlint</code> over workflow YAML.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>unit</code></td>
+                    <td>
+                      <code>npm test</code><br /><code>npm run test:scripts</code><br /><code>npm run test:coverage</code>
+                    </td>
+                    <td>
+                      Add or fix a focused test. Never weaken an assertion to clear the check.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>build</code></td>
+                    <td><code>npm run build</code><br /><code>npm run build-storybook</code></td>
+                    <td>Fix the TypeScript, Vite, or Storybook error. Check the generated output.</td>
+                  </tr>
+                  <tr>
+                    <td><code>data</code></td>
+                    <td><code>npm run data:plans:check</code></td>
+                    <td>
+                      Do not hand-edit <code>src/data/**</code>. Rerun the generator only when the
+                      source data changed.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>e2e</code></td>
+                    <td><code>npm run test:e2e</code></td>
+                    <td>
+                      Open the <code>playwright-report</code> artifact. Fix the flow or use
+                      <code>/oc fix checks</code>.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>security</code></td>
+                    <td><code>npm audit --omit=dev --audit-level=high</code></td>
+                    <td>Update the dependency or document the accepted risk.</td>
+                  </tr>
+                  <tr>
+                    <td><code>dependency-review</code></td>
+                    <td>GitHub check on dependency diffs</td>
+                    <td>Split or justify the dependency change. High-severity additions fail.</td>
+                  </tr>
+                  <tr>
+                    <td><code>risk</code></td>
+                    <td>Read the <strong>PR Risk</strong> comment and labels</td>
+                    <td>
+                      <code>risk:unknown</code> means the classifier failed. <code>risk:high</code>
+                      needs human review. <code>risk:accepted</code> only permits a manual merge.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>exploratory</code></td>
+                    <td>Review the PR comment and <code>exploratory-report</code> artifact</td>
+                    <td>
+                      Fix the finding, re-run with <code>exploratory:run</code>, or accept an
+                      unrelated pre-existing finding with a linked issue.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>ci-success</code></td>
+                    <td>Wait for the aggregate</td>
+                    <td>
+                      One of <code>changes</code>, <code>lint</code>, <code>unit</code>,
+                      <code>build</code>, <code>data</code>, <code>e2e</code>, or
+                      <code>security</code> failed. Open that job.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>preview-e2e</code></td>
+                    <td>Vercel preview + Playwright check</td>
+                    <td>Check the Vercel deployment first, then inspect the preview Playwright report.</td>
+                  </tr>
+                  <tr>
+                    <td><code>CodeQL</code></td>
+                    <td>GitHub code scanning</td>
+                    <td>Fix the alert or dismiss it with a documented reason.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="check-note">
+              The <code>gate</code> job is the auto-merge eligibility evaluator. It is expected to
+              stay blocked for UI and sensitive changes; read its reasons rather than treating the
+              block as a test failure.
+            </p>
+          </div>
+
+          <div class="playbook-lower">
+            <div class="code-panel">
+              <div class="code-panel-head">
+                <span class="code-panel-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-code"></use></svg>
+                </span>
+                <h3>Local preflight</h3>
+              </div>
+              <pre><code>npm run lint:ci
+npm run typecheck
+npm test
+npm run build
+npm run test:e2e
+npm run data:plans:check</code></pre>
+              <p>
+                Run the checks that match the change. UI and behavior changes also need e2e;
+                docs-only changes can usually skip it.
+              </p>
+            </div>
+
+            <div class="code-panel">
+              <div class="code-panel-head">
+                <span class="code-panel-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><use href="#icon-terminal"></use></svg>
+                </span>
+                <h3>Debug a red run</h3>
+              </div>
+              <pre><code>gh pr checks &lt;pr-number&gt;
+gh pr view &lt;pr-number&gt; --comments
+gh run view &lt;run-id&gt; --log-failed
+gh run download &lt;run-id&gt; -n playwright-report
+gh run download &lt;run-id&gt; -n exploratory-report</code></pre>
+              <p>Use the authenticated CLI. The browser is not the source of truth for CI state.</p>
+            </div>
+          </div>
+
+          <div class="readiness-panel">
+            <div>
+              <h3>Before you merge</h3>
+              <p class="readiness-note">
+                Green checks are evidence. The merge decision still belongs to a human.
+              </p>
+            </div>
+            <ul class="readiness-list">
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-check"></use></svg>
+                <span>The issue is linked with <code>Closes #N</code>.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-check"></use></svg>
+                <span>Tests cover the behavior; UI changes have Playwright or exploratory evidence.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-check"></use></svg>
+                <span>Local preflight passes; generated data is unchanged unless the source changed.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-check"></use></svg>
+                <span>The risk label is understood; high or unknown has human review.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-check"></use></svg>
+                <span>The exploratory report was reviewed; acceptance links to an issue.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-check"></use></svg>
+                <span>No <code>do-not-merge</code>; approval is recorded.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="playbook-callout">
+            <span class="callout-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#icon-alert"></use></svg>
+            </span>
+            <div class="callout-body">
+              <h3>Unrelated exploratory finding?</h3>
+              <p>
+                Confirm it reproduces on <code>main</code> and is not caused by this PR. Open a
+                focused issue with the evidence, add <code>exploratory:accepted</code> with a
+                comment linking that issue, and merge manually. Keep the gate intact for the next
+                change.
+              </p>
+              <a href="#notes">Read the field notes</a>
+            </div>
           </div>
         </div>
       </section>
@@ -1017,6 +1294,9 @@ gh run download &lt;run-id&gt; -n &lt;artifact-name&gt; -D /tmp/ci-artifacts</co
       </symbol>
       <symbol id="icon-code" viewBox="0 0 24 24">
         <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" />
+      </symbol>
+      <symbol id="icon-terminal" viewBox="0 0 24 24">
+        <path d="m4 6 6 6-6 6M12 18h8" />
       </symbol>
       <symbol id="icon-eye" viewBox="0 0 24 24">
         <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" />

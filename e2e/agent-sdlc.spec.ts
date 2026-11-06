@@ -28,6 +28,26 @@ test.describe('Agentic SDLC guide', () => {
     await expect(page).toHaveURL(/#stage-implement$/);
   });
 
+  test('includes the issue, PR, and check playbook', async ({ page }) => {
+    await page.goto('/agent-sdlc/index.html');
+
+    await expect(
+      page.getByRole('heading', { name: 'Work the issue. Then work the checks.' }),
+    ).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Playbook' })).toHaveAttribute(
+      'href',
+      '#playbook',
+    );
+
+    const checkTable = page.locator('.check-table');
+    await expect(checkTable).toContainText('ci-success');
+    await expect(checkTable).toContainText('exploratory');
+    await expect(page.locator('.code-panel').first()).toContainText('npm run lint:ci');
+    await expect(
+      page.getByRole('heading', { name: 'Unrelated exploratory finding?' }),
+    ).toBeVisible();
+  });
+
   test('supports keyboard navigation between stages', async ({ page }) => {
     await page.goto('/agent-sdlc/index.html');
 

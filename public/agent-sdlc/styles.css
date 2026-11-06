@@ -1685,6 +1685,339 @@ main section[id],
   color: #fff;
 }
 
+.playbook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.playbook-card {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.playbook-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.playbook-number {
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--teal-soft);
+  color: var(--teal);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.playbook-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.playbook-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.playbook-card h3 {
+  font-size: 1.06rem;
+}
+
+.playbook-list {
+  display: grid;
+  gap: 9px;
+  margin: 14px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.playbook-list li::marker {
+  color: var(--teal);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.playbook-list code {
+  font-size: 0.72rem;
+}
+
+.playbook-note {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.check-panel {
+  margin-top: 28px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.check-panel-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 24px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.check-panel-head h3 {
+  font-size: 1.04rem;
+}
+
+.check-panel-head p {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.check-required {
+  max-width: 340px;
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.6;
+  text-align: right;
+}
+
+.check-required code {
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.check-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.check-table th,
+.check-table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.check-table th {
+  background: var(--surface-2);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.check-table td {
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.check-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.check-table tbody tr:hover {
+  background: var(--surface-2);
+}
+
+.check-table td:first-child {
+  white-space: nowrap;
+}
+
+.check-table code {
+  font-size: 0.68rem;
+}
+
+.check-note {
+  padding: 14px 24px 18px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.playbook-lower {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.code-panel {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.code-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.code-panel-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--indigo-soft);
+  color: var(--indigo);
+}
+
+.code-panel-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.code-panel h3 {
+  font-size: 0.96rem;
+}
+
+.code-panel pre {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  border-radius: 10px;
+  background: var(--navy);
+  color: #e2e8f0;
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.code-panel pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.code-panel p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
+.readiness-panel {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  margin-top: 28px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.readiness-panel h3 {
+  font-size: 1.04rem;
+}
+
+.readiness-note {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.readiness-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 24px;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.readiness-list li {
+  display: flex;
+  gap: 8px;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.readiness-list svg {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  color: var(--green);
+}
+
+.readiness-list code {
+  font-size: 0.68rem;
+}
+
+.playbook-callout {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--amber-soft);
+}
+
+.callout-icon {
+  flex: 0 0 auto;
+  color: var(--amber);
+}
+
+.callout-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.callout-body h3 {
+  font-size: 0.98rem;
+}
+
+.callout-body p {
+  max-width: 900px;
+  margin-top: 7px;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.callout-body a {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--amber);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
 .agent-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2459,6 +2792,43 @@ main section[id],
   }
 
   .footer-brand {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 900px) {
+  .playbook-lower,
+  .readiness-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .check-panel-head {
+    flex-direction: column;
+  }
+
+  .check-required {
+    max-width: none;
+    text-align: left;
+  }
+
+  .readiness-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .check-table th,
+  .check-table td {
+    padding: 10px 12px;
+  }
+
+  .readiness-panel {
+    padding: 20px;
+  }
+
+  .playbook-callout {
     flex-direction: column;
   }
 }
