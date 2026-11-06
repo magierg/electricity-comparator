@@ -55,6 +55,23 @@ describe('PeakScheduleSettings', () => {
     expect(screen.queryByText('Peak hours')).not.toBeInTheDocument();
   });
 
+  it('resets a customised schedule to the default', () => {
+    const onChange = jest.fn();
+    render(<PeakScheduleSettings schedule={{ peak: [7], shoulder: [] }} onChange={onChange} />);
+
+    const reset = screen.getByRole('button', { name: /reset/i });
+    expect(reset).toBeEnabled();
+    fireEvent.click(reset);
+
+    expect(onChange).toHaveBeenCalledWith(DEFAULT_PEAK_SCHEDULE);
+  });
+
+  it('disables reset when the schedule is already the default', () => {
+    render(<PeakScheduleSettings schedule={DEFAULT_PEAK_SCHEDULE} onChange={jest.fn()} />);
+
+    expect(screen.getByRole('button', { name: /reset/i })).toBeDisabled();
+  });
+
   it('shows none when the schedule is empty', () => {
     render(<PeakScheduleSettings schedule={{ peak: [], shoulder: [] }} onChange={jest.fn()} />);
 

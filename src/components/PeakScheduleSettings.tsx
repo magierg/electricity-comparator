@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HOURS, PEAK_PRESETS } from '../constants';
+import { DEFAULT_PEAK_SCHEDULE, HOURS, PEAK_PRESETS } from '../constants';
 import { formatHour } from '../lib/format';
 import type { PeakSchedule } from '../types';
 import Card from './Card';
@@ -25,6 +25,10 @@ export default function PeakScheduleSettings({
   onChange,
 }: PeakScheduleSettingsProps) {
   const [expanded, setExpanded] = useState(false);
+
+  const isDefault =
+    sameHours(schedule.peak, DEFAULT_PEAK_SCHEDULE.peak) &&
+    sameHours(schedule.shoulder, DEFAULT_PEAK_SCHEDULE.shoulder);
 
   const activePreset = Object.entries(PEAK_PRESETS).find(
     ([, preset]) =>
@@ -65,14 +69,25 @@ export default function PeakScheduleSettings({
             </svg>
           }
           action={
-            <button
-              type="button"
-              onClick={() => setExpanded(!expanded)}
-              className="shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
-              aria-expanded={expanded}
-            >
-              {expanded ? 'Hide' : 'Customise'}
-            </button>
+            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => onChange(DEFAULT_PEAK_SCHEDULE)}
+                disabled={isDefault}
+                title="Restore the default three-tier schedule"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                onClick={() => setExpanded(!expanded)}
+                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+                aria-expanded={expanded}
+              >
+                {expanded ? 'Hide' : 'Customise'}
+              </button>
+            </div>
           }
         />
 
