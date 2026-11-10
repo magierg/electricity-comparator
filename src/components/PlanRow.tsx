@@ -30,13 +30,13 @@ function UsageLine({
   if (usage <= 0) return null;
   return (
     <div className="flex items-baseline justify-between gap-4 py-1.5">
-      <span className="text-slate-600">
-        {label} <span className="text-slate-400">({formatKwh(usage)})</span>
+      <span className="text-slate-600 dark:text-slate-300">
+        {label} <span className="text-slate-500 dark:text-slate-400">({formatKwh(usage)})</span>
         {rate !== undefined ? (
-          <span className="ml-1 text-xs text-slate-400">at {formatRate(rate)}</span>
+          <span className="ml-1 text-xs text-slate-500 dark:text-slate-400">at {formatRate(rate)}</span>
         ) : null}
       </span>
-      <span className="font-medium tabular-nums text-slate-900">{formatCurrency(cost)}</span>
+      <span className="font-medium tabular-nums text-slate-900 dark:text-slate-100">{formatCurrency(cost)}</span>
     </div>
   );
 }
@@ -63,17 +63,17 @@ export default function PlanRow({
     <div
       className={`rounded-xl border transition ${
         isBest
-          ? 'border-blue-300 bg-blue-50/40 ring-1 ring-inset ring-blue-200'
+          ? 'border-blue-300 bg-blue-50/40 ring-1 ring-inset ring-blue-200 dark:border-blue-500/40 dark:bg-blue-500/10 dark:ring-blue-500/30'
           : isCurrent
-            ? 'border-emerald-300 bg-emerald-50/30'
-            : 'border-slate-200 bg-white hover:border-slate-300'
+            ? 'border-emerald-300 bg-emerald-50/30 dark:border-emerald-500/40 dark:bg-emerald-500/10'
+            : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700'
       }`}
     >
       <div className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
         <div className="flex items-start gap-3">
           <span
             className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold tabular-nums ${
-              isBest ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
+              isBest ? 'bg-blue-600 text-white dark:bg-blue-600' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
             }`}
             aria-hidden="true"
           >
@@ -81,32 +81,32 @@ export default function PlanRow({
           </span>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-sm font-semibold text-slate-900">{result.planName}</h3>
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{result.planName}</h3>
               {isBest ? <Badge tone="blue">Best value</Badge> : null}
               {plan.category === 'ev' ? <Badge tone="amber">EV</Badge> : null}
               {plan.category === 'bundle' ? <Badge tone="violet">Bundle</Badge> : null}
               {isCurrent ? <Badge tone="emerald">Your plan</Badge> : null}
             </div>
-            <p className="mt-0.5 text-xs text-slate-500">
+            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
               {getProviderLabel(result.planName, plan.provider)
                 ? `${getProviderLabel(result.planName, plan.provider)} · `
                 : ''}
               {getPricingLabel(plan.pricing)}
             </p>
-            <p className="mt-1 text-xs text-slate-500">{getRateSummary(plan, variant)}</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{getRateSummary(plan, variant)}</p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 md:justify-end">
           <div className="text-right">
-            <p className="text-lg font-semibold tabular-nums text-slate-900">
+            <p className="text-lg font-semibold tabular-nums text-slate-900 dark:text-slate-100">
               {formatCurrency(breakdown.totalYearly)}
-              <span className="text-xs font-normal text-slate-500">/year</span>
+              <span className="text-xs font-normal text-slate-500 dark:text-slate-400">/year</span>
             </p>
-            <p className="text-xs tabular-nums text-slate-500">
+            <p className="text-xs tabular-nums text-slate-500 dark:text-slate-400">
               {formatCurrency(breakdown.totalMonthly)}/month
               {firstYearDifference !== null ? (
-                <span className="ml-2 text-amber-700">
+                <span className="ml-2 text-amber-700 dark:text-amber-300">
                   {formatCurrency(firstYearDifference)} first year
                 </span>
               ) : null}
@@ -118,8 +118,8 @@ export default function PlanRow({
               onClick={() => onSelectCurrent(plan.id)}
               className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
                 isCurrent
-                  ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-                  : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                  ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300'
+                  : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800'
               }`}
               aria-pressed={isCurrent}
             >
@@ -128,7 +128,7 @@ export default function PlanRow({
             <button
               type="button"
               onClick={() => setExpanded(!expanded)}
-              className="rounded-lg border border-slate-300 bg-white p-1.5 text-slate-600 transition hover:bg-slate-50"
+              className="rounded-lg border border-slate-300 bg-white p-1.5 text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-800"
               aria-expanded={expanded}
               aria-label={expanded ? `Hide ${result.planName} details` : `Show ${result.planName} details`}
             >
@@ -147,13 +147,13 @@ export default function PlanRow({
       </div>
 
       {expanded ? (
-        <div className="border-t border-slate-200 px-4 pb-4 pt-3">
+        <div className="border-t border-slate-200 px-4 pb-4 pt-3 dark:border-slate-800">
           <div className="grid gap-5 lg:grid-cols-2">
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Cost breakdown
               </h4>
-              <div className="mt-2 divide-y divide-slate-100 text-sm">
+              <div className="mt-2 divide-y divide-slate-100 text-sm dark:divide-slate-800">
                 {isInclusive ? (
                   <UsageLine
                     label="Usage"
@@ -187,90 +187,90 @@ export default function PlanRow({
                 )}
                 {breakdown.levyCost > 0 ? (
                   <div className="flex items-baseline justify-between gap-4 py-1.5">
-                    <span className="text-slate-600">Electricity Authority levy</span>
-                    <span className="font-medium tabular-nums text-slate-900">
+                    <span className="text-slate-600 dark:text-slate-300">Electricity Authority levy</span>
+                    <span className="font-medium tabular-nums text-slate-900 dark:text-slate-100">
                       {formatCurrency(breakdown.levyCost)}
                     </span>
                   </div>
                 ) : null}
                 <div className="flex items-baseline justify-between gap-4 py-1.5">
-                  <span className="text-slate-600">Daily charge</span>
-                  <span className="font-medium tabular-nums text-slate-900">
+                  <span className="text-slate-600 dark:text-slate-300">Daily charge</span>
+                  <span className="font-medium tabular-nums text-slate-900 dark:text-slate-100">
                     {formatCurrency(breakdown.dailyCharge)}
                   </span>
                 </div>
-                <div className="flex items-baseline justify-between gap-4 py-2 text-sm font-semibold text-slate-900">
+                <div className="flex items-baseline justify-between gap-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
                   <span>Total per day</span>
                   <span className="tabular-nums">{formatCurrency(breakdown.totalDaily)}</span>
                 </div>
               </div>
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                 Effective usage rate: {formatRate(breakdown.effectiveRate)}
               </p>
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Plan details
               </h4>
               <dl className="space-y-2 text-sm">
                 <div className="flex justify-between gap-4">
-                  <dt className="text-slate-500">Daily charge</dt>
-                  <dd className="font-medium tabular-nums text-slate-900">
+                  <dt className="text-slate-500 dark:text-slate-400">Daily charge</dt>
+                  <dd className="font-medium tabular-nums text-slate-900 dark:text-slate-100">
                     {formatCurrency(variant.dailyCharge)}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt className="text-slate-500">Annual estimate</dt>
-                  <dd className="font-medium tabular-nums text-slate-900">
+                  <dt className="text-slate-500 dark:text-slate-400">Annual estimate</dt>
+                  <dd className="font-medium tabular-nums text-slate-900 dark:text-slate-100">
                     {formatCurrency(breakdown.totalYearly)}
                   </dd>
                 </div>
                 {variant.cashDiscount ? (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-slate-500">Sign-up credit</dt>
-                    <dd className="font-medium tabular-nums text-emerald-700">
+                    <dt className="text-slate-500 dark:text-slate-400">Sign-up credit</dt>
+                    <dd className="font-medium tabular-nums text-emerald-700 dark:text-emerald-300">
                       −{formatCurrency(variant.cashDiscount)}
                     </dd>
                   </div>
                 ) : null}
                 {variant.percentDiscount ? (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-slate-500">
+                    <dt className="text-slate-500 dark:text-slate-400">
                       {variant.percentDiscount}% discount
                     </dt>
-                    <dd className="font-medium tabular-nums text-emerald-700">
+                    <dd className="font-medium tabular-nums text-emerald-700 dark:text-emerald-300">
                       −{formatCurrency(percentageDiscount)}
                     </dd>
                   </div>
                 ) : null}
                 {result.freePowerDiscount > 0.5 ? (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-slate-500">Free power value (est.)</dt>
-                    <dd className="font-medium tabular-nums text-emerald-700">
+                    <dt className="text-slate-500 dark:text-slate-400">Free power value (est.)</dt>
+                    <dd className="font-medium tabular-nums text-emerald-700 dark:text-emerald-300">
                       −{formatCurrency(result.freePowerDiscount)}
                     </dd>
                   </div>
                 ) : null}
                 {firstYearDifference !== null ? (
-                  <div className="flex justify-between gap-4 border-t border-slate-100 pt-2">
-                    <dt className="font-medium text-slate-700">First year after discounts</dt>
-                    <dd className="font-semibold tabular-nums text-amber-700">
+                  <div className="flex justify-between gap-4 border-t border-slate-100 pt-2 dark:border-slate-800">
+                    <dt className="font-medium text-slate-700 dark:text-slate-300">First year after discounts</dt>
+                    <dd className="font-semibold tabular-nums text-amber-700 dark:text-amber-300">
                       {formatCurrency(firstYearDifference)}
                     </dd>
                   </div>
                 ) : null}
                 {variant.contractTerm ? (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-slate-500">Contract</dt>
-                    <dd className="text-right font-medium text-slate-900">
+                    <dt className="text-slate-500 dark:text-slate-400">Contract</dt>
+                    <dd className="text-right font-medium text-slate-900 dark:text-slate-100">
                       {variant.contractTerm}
                     </dd>
                   </div>
                 ) : null}
                 {variant.discount ? (
-                  <div className="rounded-lg bg-slate-50 p-3 text-xs leading-5 text-slate-600 ring-1 ring-inset ring-slate-200">
-                    <span className="font-semibold text-slate-700">Discount: </span>
+                  <div className="rounded-lg bg-slate-50 p-3 text-xs leading-5 text-slate-600 ring-1 ring-inset ring-slate-200 dark:bg-slate-950 dark:text-slate-300 dark:ring-slate-800">
+                    <span className="font-semibold text-slate-700 dark:text-slate-200">Discount: </span>
                     {variant.discount}
                   </div>
                 ) : null}

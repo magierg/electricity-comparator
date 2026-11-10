@@ -18,10 +18,10 @@ export default function UserTypeToggle({
 }: UserTypeToggleProps) {
   return (
     <fieldset>
-      <legend className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+      <legend className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
         User type
       </legend>
-      <div className="mt-2 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+      <div className="mt-2 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
         {(['low', 'standard'] as const).map((option) => (
           <button
             key={option}
@@ -30,8 +30,8 @@ export default function UserTypeToggle({
             onClick={() => onChange(option)}
             className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
               value === option
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-blue-600 text-white shadow-sm dark:bg-blue-600'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
             }`}
           >
             {option === 'low' ? 'Low user' : 'Standard user'}
@@ -39,22 +39,22 @@ export default function UserTypeToggle({
         ))}
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
         <span>
-          Suggested: <span className="font-medium text-slate-700">{suggested === 'low' ? 'Low user' : 'Standard user'}</span>
+          Suggested: <span className="font-medium text-slate-700 dark:text-slate-300">{suggested === 'low' ? 'Low user' : 'Standard user'}</span>
           {' '}at {formatKwh(annualKwh)}/year.
         </span>
         {value !== suggested ? (
           <button
             type="button"
             onClick={onUseSuggested}
-            className="font-semibold text-blue-700 underline decoration-blue-300 underline-offset-2 hover:text-blue-800"
+            className="font-semibold text-blue-700 underline decoration-blue-300 underline-offset-2 hover:text-blue-800 dark:text-blue-300 dark:decoration-blue-500 dark:hover:text-blue-200"
           >
             Use suggestion
           </button>
         ) : null}
       </div>
-      <p className="mt-1 text-[11px] leading-4 text-slate-400">
+      <p className="mt-1 text-[11px] leading-4 text-slate-500 dark:text-slate-400">
         Low user: under 8,000 kWh/year. Lower daily charge, higher per-kWh rate.
       </p>
     </fieldset>

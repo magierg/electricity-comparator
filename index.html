@@ -9,6 +9,37 @@
       content="Compare real Wellington electricity plans against your household usage and estimate your annual savings."
     />
     <title>Wellington Electricity Plan Comparison</title>
+    <script>
+      (function () {
+        var theme = 'light';
+        var hasStored = false;
+        try {
+          var stored = localStorage.getItem('electricity-theme');
+          if (stored === 'light' || stored === 'dark') {
+            theme = stored;
+            hasStored = true;
+          }
+        } catch (error) {
+          void error;
+        }
+        if (!hasStored) {
+          try {
+            if (
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches
+            ) {
+              theme = 'dark';
+            }
+          } catch (error) {
+            void error;
+          }
+        }
+        var root = document.documentElement;
+        root.classList.toggle('dark', theme === 'dark');
+        root.style.colorScheme = theme;
+        root.style.backgroundColor = theme === 'dark' ? '#020617' : '#f8fafc';
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

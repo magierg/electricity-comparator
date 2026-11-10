@@ -11,7 +11,9 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { CHART_COLORS } from '../constants';
+import { getChartTheme } from '../lib/chartTheme';
 import { formatHour, formatKwh } from '../lib/format';
+import type { Theme } from '../lib/theme';
 import type { PeakSchedule, UsagePattern } from '../types';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -19,10 +21,17 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 interface UsageChartProps {
   usage: UsagePattern;
   schedule: PeakSchedule;
+  theme: Theme;
   className?: string;
 }
 
-export default function UsageChart({ usage, schedule, className = '' }: UsageChartProps) {
+export default function UsageChart({
+  usage,
+  schedule,
+  theme,
+  className = '',
+}: UsageChartProps) {
+  const chartTheme = getChartTheme(theme);
   const peakHours = new Set(schedule.peak);
   const shoulderHours = new Set(schedule.shoulder);
   const labels = Array.from({ length: 24 }, (_, hour) => formatHour(hour));
@@ -58,6 +67,11 @@ export default function UsageChart({ usage, schedule, className = '' }: UsageCha
     plugins: {
       legend: { display: false },
       tooltip: {
+        backgroundColor: chartTheme.tooltipBackground,
+        titleColor: chartTheme.tooltipTitleColor,
+        bodyColor: chartTheme.tooltipBodyColor,
+        borderColor: chartTheme.tooltipBorderColor,
+        borderWidth: 1,
         callbacks: {
           title: (items) => {
             const item = items[0];
@@ -74,7 +88,7 @@ export default function UsageChart({ usage, schedule, className = '' }: UsageCha
       x: {
         grid: { display: false },
         ticks: {
-          color: '#64748b',
+          color: chartTheme.tickColor,
           maxRotation: 0,
           autoSkip: true,
           maxTicksLimit: 12,
@@ -82,9 +96,9 @@ export default function UsageChart({ usage, schedule, className = '' }: UsageCha
       },
       y: {
         beginAtZero: true,
-        grid: { color: 'rgba(148, 163, 184, 0.18)' },
+        grid: { color: chartTheme.gridColor },
         ticks: {
-          color: '#64748b',
+          color: chartTheme.tickColor,
           callback: (value) => `${value} kWh`,
         },
       },
@@ -98,12 +112,12 @@ export default function UsageChart({ usage, schedule, className = '' }: UsageCha
     <div className={className}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-slate-900">Daily usage shape</h3>
-          <p className="text-xs text-slate-500">
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Daily usage shape</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {formatKwh(total)} per day · {formatKwh(annual)} per year
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-sm bg-amber-500" aria-hidden="true" />
             Peak
@@ -113,7 +127,7 @@ export default function UsageChart({ usage, schedule, className = '' }: UsageCha
             Shoulder
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-slate-400" aria-hidden="true" />
+            <span className="h-2.5 w-2.5 rounded-sm bg-slate-400 dark:bg-slate-500" aria-hidden="true" />
             Off-peak
           </span>
         </div>

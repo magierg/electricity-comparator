@@ -32,16 +32,40 @@ function meterCsv(): string {
 
 const originalFetch = globalThis.fetch;
 
+function mockMatchMedia(matches: boolean) {
+  Object.defineProperty(window, 'matchMedia', {
+    configurable: true,
+    writable: true,
+    value: jest.fn().mockReturnValue({
+      matches,
+      media: '(prefers-color-scheme: dark)',
+      onchange: null,
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }),
+  });
+}
+
 beforeEach(() => {
   globalThis.fetch = jest.fn().mockResolvedValue({
     ok: true,
     text: async () => meterCsv(),
   }) as unknown as typeof fetch;
+  window.localStorage.clear();
+  document.documentElement.className = '';
+  document.documentElement.removeAttribute('style');
 });
 
 afterEach(() => {
   globalThis.fetch = originalFetch;
   jest.restoreAllMocks();
+  window.localStorage.clear();
+  document.documentElement.className = '';
+  document.documentElement.removeAttribute('style');
+  Reflect.deleteProperty(window, 'matchMedia');
 });
 
 async function renderApp() {
@@ -174,5 +198,36 @@ describe('App', () => {
 
     fireEvent.change(firstHour, { target: { value: '-2' } });
     expect(firstHour.value).toBe('0');
+  });
+
+  it('starts in the system dark theme', async () => {
+    mockMatchMedia(true);
+    await renderApp();
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(screen.getByRole('button', { name: /^dark$/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  it('uses a stored theme instead of the system theme', async () => {
+    mockMatchMedia(false);
+    window.localStorage.setItem('electricity-theme', 'dark');
+    await renderApp();
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+
+  it('toggles the theme and persists the manual choice', async () => {
+    await renderApp();
+
+    fireEvent.click(screen.getByRole('button', { name: /^dark$/i }));
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(window.localStorage.getItem('electricity-theme')).toBe('dark');
+
+    fireEvent.click(screen.getByRole('button', { name: /^light$/i }));
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+    expect(window.localStorage.getItem('electricity-theme')).toBe('light');
   });
 });

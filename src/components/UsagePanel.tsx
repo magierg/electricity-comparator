@@ -81,7 +81,7 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
 
   return (
     <Card ariaLabel="Your electricity usage">
-      <div className="border-b border-slate-200 px-5 py-4">
+      <div className="border-b border-slate-200 px-5 py-4 dark:border-slate-800">
         <SectionHeader
           title="Your usage"
           description="Use a quick annual estimate or load your half-hour meter data."
@@ -94,7 +94,7 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
       </div>
 
       <div className="space-y-5 p-5">
-        <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1" role="tablist" aria-label="Usage input method">
+        <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-800" role="tablist" aria-label="Usage input method">
           {MODES.map((option) => (
             <button
               key={option.value}
@@ -104,8 +104,8 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
               onClick={() => handleModeChange(option.value)}
               className={`rounded-lg px-2 py-2 text-xs font-semibold transition sm:text-sm ${
                 mode === option.value
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
               }`}
             >
               <span className="sm:hidden">{option.shortLabel}</span>
@@ -117,30 +117,30 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
         {mode === 'estimate' ? (
           <div className="space-y-4">
             <label className="block">
-              <span className="text-sm font-medium text-slate-700">Annual usage</span>
-              <div className="mt-1.5 flex items-center rounded-xl border border-slate-300 bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Annual usage</span>
+              <div className="mt-1.5 flex items-center rounded-xl border border-slate-300 bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 dark:border-slate-700 dark:bg-slate-950 dark:focus-within:border-blue-400 dark:focus-within:ring-blue-500/30">
                 <input
                   type="number"
                   min={0}
                   step={100}
                   value={annualKwh}
                   onChange={(event) => handleAnnualChange(Number(event.target.value))}
-                  className="w-full rounded-xl border-0 bg-transparent px-3 py-2.5 text-base font-semibold tabular-nums text-slate-900 focus:outline-none"
+                  className="w-full rounded-xl border-0 bg-transparent px-3 py-2.5 text-base font-semibold tabular-nums text-slate-900 focus:outline-none dark:text-slate-100"
                 />
-                <span className="pr-3 text-sm text-slate-500">kWh/year</span>
+                <span className="pr-3 text-sm text-slate-500 dark:text-slate-400">kWh/year</span>
               </div>
             </label>
 
             <fieldset>
-              <legend className="text-sm font-medium text-slate-700">Usage shape</legend>
+              <legend className="text-sm font-medium text-slate-700 dark:text-slate-300">Usage shape</legend>
               <div className="mt-2 space-y-2">
                 {USAGE_SHAPES.map((option) => (
                   <label
                     key={option.value}
                     className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition ${
                       shape === option.value
-                        ? 'border-blue-300 bg-blue-50'
-                        : 'border-slate-200 bg-white hover:border-slate-300'
+                        ? 'border-blue-300 bg-blue-50 dark:border-blue-500/40 dark:bg-blue-500/10'
+                        : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-950 dark:hover:border-slate-600'
                     }`}
                   >
                     <input
@@ -149,13 +149,13 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
                       value={option.value}
                       checked={shape === option.value}
                       onChange={() => handleShapeChange(option.value)}
-                      className="mt-1 h-4 w-4 accent-blue-600"
+                      className="mt-1 h-4 w-4 accent-blue-600 dark:accent-blue-400"
                     />
                     <span>
-                      <span className="block text-sm font-medium text-slate-900">
+                      <span className="block text-sm font-medium text-slate-900 dark:text-slate-100">
                         {option.label}
                       </span>
-                      <span className="block text-xs text-slate-500">
+                      <span className="block text-xs text-slate-500 dark:text-slate-400">
                         {option.description}
                       </span>
                     </span>
@@ -164,7 +164,7 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
               </div>
             </fieldset>
 
-            <p className="text-xs leading-5 text-slate-500">
+            <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
               That is about {formatKwh(daily)} per day. The low-user threshold is 8,000
               kWh/year.
             </p>
@@ -173,13 +173,13 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
 
         {mode === 'custom' ? (
           <div className="space-y-4">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Enter kWh used in each hour. The total is calculated automatically.
             </p>
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
               {Array.from({ length: 24 }, (_, hour) => (
                 <label key={hour} className="block">
-                  <span className="mb-1 block text-[11px] font-medium text-slate-500">
+                  <span className="mb-1 block text-[11px] font-medium text-slate-500 dark:text-slate-400">
                     {formatHour(hour)}
                   </span>
                   <input
@@ -188,7 +188,7 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
                     step={0.1}
                     value={Number(customHours[hour]?.toFixed(2) ?? 0)}
                     onChange={(event) => handleHourChange(hour, Number(event.target.value))}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-sm tabular-nums text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-sm tabular-nums text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-500/30"
                   />
                 </label>
               ))}
@@ -204,35 +204,35 @@ export default function UsagePanel({ usage, source, onUsageChange }: UsagePanelP
           />
         ) : null}
 
-        <dl className="grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-3 text-center">
+        <dl className="grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-3 text-center dark:bg-slate-950">
           <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Per day
             </dt>
-            <dd className="mt-1 text-sm font-semibold tabular-nums text-slate-900">
+            <dd className="mt-1 text-sm font-semibold tabular-nums text-slate-900 dark:text-slate-100">
               {formatKwh(daily)}
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Per year
             </dt>
-            <dd className="mt-1 text-sm font-semibold tabular-nums text-slate-900">
+            <dd className="mt-1 text-sm font-semibold tabular-nums text-slate-900 dark:text-slate-100">
               {formatKwh(annual)}
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Per hour
             </dt>
-            <dd className="mt-1 text-sm font-semibold tabular-nums text-slate-900">
+            <dd className="mt-1 text-sm font-semibold tabular-nums text-slate-900 dark:text-slate-100">
               {formatKwh(averageHourly)}
             </dd>
           </div>
         </dl>
 
-        <p className="text-xs text-slate-500">
-          Showing <span className="font-medium text-slate-700">{source.label}</span>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Showing <span className="font-medium text-slate-700 dark:text-slate-300">{source.label}</span>
           {source.days && source.days > 1 ? ` · ${source.days} days` : ''}.
         </p>
       </div>

@@ -18,10 +18,10 @@ export default function LoadingSpinner({
   return (
     <div
       role="status"
-      className={`flex items-center justify-center gap-3 text-sm text-slate-600 ${className}`}
+      className={`flex items-center justify-center gap-3 text-sm text-slate-600 dark:text-slate-400 ${className}`}
     >
       <span
-        className={`${SIZE_CLASSES[size]} animate-spin rounded-full border-slate-200 border-t-blue-600`}
+        className={`${SIZE_CLASSES[size]} animate-spin rounded-full border-slate-200 border-t-blue-600 dark:border-slate-700 dark:border-t-blue-400`}
         aria-hidden="true"
       />
       {text ? <span>{text}</span> : null}
