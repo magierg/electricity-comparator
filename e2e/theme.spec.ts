@@ -6,16 +6,20 @@ async function contrastRatio(locator: Locator): Promise<number> {
   return locator.evaluate((element) => {
     type Rgba = { r: number; g: number; b: number; a: number };
 
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    const context = canvas.getContext('2d');
+
     const parse = (value: string): Rgba | null => {
-      const match = value.match(/rgba?\(([^)]+)\)/);
-      if (!match) return null;
-      const parts = match[1]
-        .split(',')
-        .map((part) => Number.parseFloat(part.trim()));
-      if (parts.length < 3 || parts.some((part) => Number.isNaN(part))) {
-        return null;
-      }
-      return { r: parts[0], g: parts[1], b: parts[2], a: parts[3] ?? 1 };
+      if (!context || value.trim() === '') return null;
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = '#ffffff';
+      context.fillStyle = value;
+      context.fillRect(0, 0, 1, 1);
+      const [r, g, b, a] = context.getImageData(0, 0, 1, 1).data;
+      if (a === undefined) return null;
+      return { r, g, b, a: a / 255 };
     };
 
     const blend = (top: Rgba, bottom: Rgba): Rgba => ({
