@@ -110,7 +110,7 @@ function App() {
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start">
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0">
             <UsagePanel
               usage={usage}
               source={usageSource}
@@ -126,7 +126,7 @@ function App() {
             <PeakScheduleSettings schedule={schedule} onChange={setSchedule} />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0">
             <ResultsSummary
               best={bestResult}
               current={currentResult}
