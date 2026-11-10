@@ -51,7 +51,7 @@ describe('UsageChart', () => {
   };
 
   it('renders the usage summary and chart', () => {
-    render(<UsageChart usage={usage} schedule={schedule} />);
+    render(<UsageChart usage={usage} schedule={schedule} theme="light" />);
 
     expect(screen.getByText('Daily usage shape')).toBeInTheDocument();
     expect(screen.getByText(/24 kWh per day/i)).toBeInTheDocument();
@@ -59,14 +59,14 @@ describe('UsageChart', () => {
   });
 
   it('renders 24 hour labels', () => {
-    render(<UsageChart usage={usage} schedule={schedule} />);
+    render(<UsageChart usage={usage} schedule={schedule} theme="light" />);
 
     expect(screen.getByTestId('label-0')).toHaveTextContent('00:00');
     expect(screen.getByTestId('label-23')).toHaveTextContent('23:00');
   });
 
   it('renders all 24 usage values', () => {
-    render(<UsageChart usage={usage} schedule={schedule} />);
+    render(<UsageChart usage={usage} schedule={schedule} theme="light" />);
 
     for (let hour = 0; hour < 24; hour += 1) {
       expect(screen.getByTestId(`data-${hour}`)).toHaveTextContent('1');
@@ -74,7 +74,7 @@ describe('UsageChart', () => {
   });
 
   it('shows the peak, shoulder, and off-peak legend', () => {
-    render(<UsageChart usage={usage} schedule={schedule} />);
+    render(<UsageChart usage={usage} schedule={schedule} theme="light" />);
 
     expect(screen.getByText('Peak')).toBeInTheDocument();
     expect(screen.getByText('Shoulder')).toBeInTheDocument();
@@ -83,7 +83,12 @@ describe('UsageChart', () => {
 
   it('applies a custom className', () => {
     const { container } = render(
-      <UsageChart usage={usage} schedule={schedule} className="custom-class" />,
+      <UsageChart
+        usage={usage}
+        schedule={schedule}
+        theme="light"
+        className="custom-class"
+      />,
     );
 
     expect(container.firstChild).toHaveClass('custom-class');

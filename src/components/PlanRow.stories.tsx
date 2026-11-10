@@ -46,3 +46,20 @@ export const CurrentPlan: Story = {
     onSelectCurrent: () => {},
   },
 };
+
+export const DarkBestValue: Story = {
+  args: {
+    result: result!,
+    rank: 1,
+    isBest: true,
+    isCurrent: false,
+    onSelectCurrent: () => {},
+  },
+  decorators: [
+    (Story) => (
+      <div className="dark bg-slate-950 p-4">
+        <Story />
+      </div>
+    ),
+  ],
+};

@@ -23,5 +23,21 @@ export const Default: Story = {
   args: {
     usage,
     schedule: DEFAULT_PEAK_SCHEDULE,
+    theme: 'light',
   },
+};
+
+export const Dark: Story = {
+  args: {
+    usage,
+    schedule: DEFAULT_PEAK_SCHEDULE,
+    theme: 'dark',
+  },
+  decorators: [
+    (Story) => (
+      <div className="dark bg-slate-950 p-4">
+        <Story />
+      </div>
+    ),
+  ],
 };

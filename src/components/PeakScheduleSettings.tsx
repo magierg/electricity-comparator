@@ -75,14 +75,14 @@ export default function PeakScheduleSettings({
                 onClick={() => onChange(DEFAULT_PEAK_SCHEDULE)}
                 disabled={isDefault}
                 title="Restore the default three-tier schedule"
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 Reset
               </button>
               <button
                 type="button"
                 onClick={() => setExpanded(!expanded)}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
                 aria-expanded={expanded}
               >
                 {expanded ? 'Hide' : 'Customise'}
@@ -100,8 +100,8 @@ export default function PeakScheduleSettings({
               title={preset.description}
               className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                 activePreset === key
-                  ? 'border-blue-300 bg-blue-50 text-blue-700'
-                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                  ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-300'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-600'
               }`}
             >
               {preset.label}
@@ -109,7 +109,7 @@ export default function PeakScheduleSettings({
           ))}
         </div>
 
-        <p className="mt-3 text-xs leading-5 text-slate-500">
+        <p className="mt-3 text-xs leading-5 text-slate-500 dark:text-slate-400">
           Peak: {schedule.peak.length > 0 ? schedule.peak.map(formatHour).join(', ') : 'none'}.
           Shoulder: {schedule.shoulder.length > 0 ? schedule.shoulder.map(formatHour).join(', ') : 'none'}.
           Two-tier plans bill shoulder hours at their off-peak rate.
@@ -117,9 +117,9 @@ export default function PeakScheduleSettings({
       </div>
 
       {expanded ? (
-        <div className="space-y-4 border-t border-slate-200 px-5 py-4">
+        <div className="space-y-4 border-t border-slate-200 px-5 py-4 dark:border-slate-800">
           <fieldset>
-            <legend className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600">
+            <legend className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
               <span className="h-2.5 w-2.5 rounded-sm bg-amber-500" aria-hidden="true" />
               Peak hours
             </legend>
@@ -134,8 +134,8 @@ export default function PeakScheduleSettings({
                     onClick={() => handlePeakToggle(hour)}
                     className={`rounded-lg px-1.5 py-1.5 text-[11px] font-medium tabular-nums transition ${
                       selected
-                        ? 'bg-amber-500 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-amber-100'
+                        ? 'bg-amber-500 text-white dark:bg-amber-400 dark:text-slate-950'
+                        : 'bg-slate-100 text-slate-600 hover:bg-amber-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-amber-500/20'
                     }`}
                   >
                     {String(hour).padStart(2, '0')}
@@ -146,7 +146,7 @@ export default function PeakScheduleSettings({
           </fieldset>
 
           <fieldset>
-            <legend className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600">
+            <legend className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
               <span className="h-2.5 w-2.5 rounded-sm bg-violet-600" aria-hidden="true" />
               Shoulder hours
             </legend>
@@ -162,7 +162,7 @@ export default function PeakScheduleSettings({
                     className={`rounded-lg px-1.5 py-1.5 text-[11px] font-medium tabular-nums transition ${
                       selected
                         ? 'bg-violet-600 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-violet-100'
+                        : 'bg-slate-100 text-slate-600 hover:bg-violet-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-violet-500/20'
                     }`}
                   >
                     {String(hour).padStart(2, '0')}
@@ -172,7 +172,7 @@ export default function PeakScheduleSettings({
             </div>
           </fieldset>
 
-          <p className="text-xs leading-5 text-slate-500">
+          <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
             An hour cannot be both peak and shoulder. Everything else is off-peak.
           </p>
         </div>

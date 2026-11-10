@@ -31,7 +31,7 @@ export default function PlanResults({
 
   return (
     <Card ariaLabel="Plan comparison results">
-      <div className="border-b border-slate-200 px-5 py-4">
+      <div className="border-b border-slate-200 px-5 py-4 dark:border-slate-800">
         <SectionHeader
           title="Plans ranked by annual cost"
           description="Estimates use your usage shape, the selected user type, and the selected peak windows."
@@ -46,13 +46,13 @@ export default function PlanResults({
       <div className="space-y-4 p-5">
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="block">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Provider
             </span>
             <select
               value={provider}
               onChange={(event) => onProviderChange(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-500/30"
             >
               <option value="all">All providers</option>
               {providers.map((option) => (
@@ -64,7 +64,7 @@ export default function PlanResults({
           </label>
 
           <label className="block">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Plan type
             </span>
             <select
@@ -72,7 +72,7 @@ export default function PlanResults({
               onChange={(event) =>
                 onCategoryChange(event.target.value as PlanCategory | 'all')
               }
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-500/30"
             >
               <option value="all">All plan types</option>
               <option value="standard">Standard</option>
@@ -82,13 +82,13 @@ export default function PlanResults({
           </label>
 
           <label className="block">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Your current plan
             </span>
             <select
               value={currentPlanId}
               onChange={(event) => onSelectCurrent(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-500/30"
             >
               <option value="">Not selected</option>
               {currentPlanOptions.map((result) => (
@@ -102,7 +102,7 @@ export default function PlanResults({
           </label>
         </div>
 
-        <div className="flex items-center justify-between gap-3 text-xs text-slate-500">
+        <div className="flex items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
           <span>
             {results.length} plan{results.length === 1 ? '' : 's'} shown
             {hasFilters ? ' after filters' : ''}.
@@ -114,7 +114,7 @@ export default function PlanResults({
                 onProviderChange('all');
                 onCategoryChange('all');
               }}
-              className="font-semibold text-blue-700 hover:text-blue-800"
+              className="font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200"
             >
               Clear filters
             </button>
@@ -122,7 +122,7 @@ export default function PlanResults({
         </div>
 
         {results.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
+          <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-400">
             No plans match those filters. Try clearing them.
           </div>
         ) : (
